@@ -1,6 +1,6 @@
 +++
-title = "Building c2rust"
-date = 2021-06-05
+title: Building c2rust
+date: 2021-06-05
 +++
 
 [c2rust](https://github.com/immunant/c2rust) is a really neat and

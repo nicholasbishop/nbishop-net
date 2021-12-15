@@ -66,7 +66,7 @@ fn get_all_contents(conf: &Conf) -> Result<Vec<Content>> {
             .ok_or_else(|| anyhow!("missing body in {}", source.display()))?;
         let mut front_matter = HashMap::new();
         for line in front.lines() {
-            let parts = line.splitn(2, '=').collect::<Vec<_>>();
+            let parts = line.splitn(2, ':').collect::<Vec<_>>();
             if parts.len() == 2 {
                 front_matter.insert(
                     parts[0].trim().to_owned(),
@@ -97,11 +97,10 @@ fn get_markdown_toc_list<P: AsRef<Path>>(
     contents
         .iter()
         .filter_map(|c| {
-            if let Ok(rest) = c.rel_to_output_dir.strip_prefix(prefix.as_ref())
-            {
+            if c.rel_to_output_dir.starts_with(prefix.as_ref()) {
                 Some(format!(
                     "* [{}]({})",
-                    rest.display(),
+                    c.front_matter["title"],
                     c.rel_to_output_dir.display()
                 ))
             } else {
