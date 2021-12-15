@@ -1,14 +1,14 @@
 use anyhow::{anyhow, Result};
+use camino::{Utf8Path, Utf8PathBuf};
 use fs_err as fs;
 use std::collections::HashMap;
-use std::path::{Path, PathBuf};
 use tera::{Context, Tera};
 use walkdir::WalkDir;
 
 #[derive(Debug)]
 struct Conf {
-    content_dir: PathBuf,
-    output_dir: PathBuf,
+    content_dir: Utf8PathBuf,
+    output_dir: Utf8PathBuf,
 }
 
 #[derive(Debug)]
@@ -20,13 +20,13 @@ struct FrontMatter {
 #[derive(Debug)]
 struct Content {
     /// Input path with the first component being `Conf::content_dir`.
-    source: PathBuf,
+    source: Utf8PathBuf,
 
     /// Output file name.
     output_name: String,
 
     /// Input directory relative to `Conf::content_dir`.
-    subdir: PathBuf,
+    subdir: Utf8PathBuf,
 
     /// Front-matter.
     front_matter: FrontMatter,
@@ -40,7 +40,9 @@ fn get_all_contents(conf: &Conf) -> Result<Vec<Content>> {
 
     for entry in WalkDir::new(&conf.content_dir) {
         let entry = entry?;
-        let source = entry.path();
+        let source = Utf8Path::from_path(entry.path()).ok_or_else(|| {
+            anyhow!("path is not UTF-8: {}", entry.path().display())
+        })?;
 
         if !entry.file_type().is_file() {
             continue;
@@ -57,7 +59,6 @@ fn get_all_contents(conf: &Conf) -> Result<Vec<Content>> {
         let output_name = rel_path
             .with_extension("html")
             .iter()
-            .map(|s| s.to_str().unwrap())
             .collect::<Vec<_>>()
             .join("_");
 
@@ -65,12 +66,12 @@ fn get_all_contents(conf: &Conf) -> Result<Vec<Content>> {
         let sep = "+++";
         let all = fs::read_to_string(source)?;
         let mut iter = all.splitn(3, sep).skip(1);
-        let front = iter.next().ok_or_else(|| {
-            anyhow!("missing front matter in {}", source.display())
-        })?;
+        let front = iter
+            .next()
+            .ok_or_else(|| anyhow!("missing front matter in {}", source))?;
         let body = iter
             .next()
-            .ok_or_else(|| anyhow!("missing body in {}", source.display()))?;
+            .ok_or_else(|| anyhow!("missing body in {}", source))?;
         let mut front_matter = HashMap::new();
         for line in front.lines() {
             let parts = line.splitn(2, ':').collect::<Vec<_>>();
@@ -95,7 +96,7 @@ fn get_all_contents(conf: &Conf) -> Result<Vec<Content>> {
     Ok(contents)
 }
 
-fn get_markdown_toc_list<P: AsRef<Path>>(
+fn get_markdown_toc_list<P: AsRef<Utf8Path>>(
     contents: &[Content],
     subdir: P,
 ) -> String {
@@ -116,8 +117,8 @@ fn get_markdown_toc_list<P: AsRef<Path>>(
 
 fn main() -> Result<()> {
     let conf = Conf {
-        content_dir: Path::new("content").into(),
-        output_dir: Path::new("output").into(),
+        content_dir: "content".into(),
+        output_dir: "output".into(),
     };
 
     // Delete the output directory entirely before filling it.
@@ -133,11 +134,7 @@ fn main() -> Result<()> {
     for content in &contents {
         let output_path = conf.output_dir.join(&content.output_name);
 
-        println!(
-            "render {} -> {}",
-            content.source.display(),
-            output_path.display()
-        );
+        println!("render {} -> {}", content.source, output_path);
 
         let mut markdown = content.body.clone();
 

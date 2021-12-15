@@ -6,6 +6,7 @@ publish = false
 
 [dependencies]
 anyhow = "1.0.51"
+camino = "1.0.5"
 comrak = "0.12.1"
 fs-err = "2.6.0"
 tera = "1.15.0"
