@@ -2,4 +2,7 @@ body {
     background-color: #eee;
     color: #334;
     font-family: sans;
+
+    max-width: 60em;
+    margin: auto;
 }
