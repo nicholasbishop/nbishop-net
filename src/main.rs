@@ -27,16 +27,24 @@ fn main() -> Result<()> {
             fs::create_dir_all(&output_dir)?;
         }
 
-        // TODO: for now just copy stuff
-        let dst_path = output_dir.join(entry.file_name());
-        println!("cp {} {}", entry.path().display(), dst_path.display());
-        fs::copy(entry.path(), dst_path)?;
+        let extension = entry.path().extension().unwrap();
 
-        dbg!(output_dir);
+        if extension == "md" {
+            let output_name = Path::new(entry.file_name()).with_extension("html");
+            let output_path = output_dir.join(output_name);
+
+            println!(
+                "render {} -> {}",
+                entry.path().display(),
+                output_path.display()
+            );
+
+            let markdown = fs::read_to_string(entry.path())?;
+            let html = comrak::markdown_to_html(&markdown, &Default::default());
+
+            fs::write(&output_path, html)?;
+        }
     }
-
-    // Recursively render everything in the content directory.
-    // Output into the output directory.
 
     Ok(())
 }
