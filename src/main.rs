@@ -88,7 +88,9 @@ fn main() -> Result<()> {
     };
 
     // Delete the output directory entirely before filling it.
-    fs::remove_dir_all(&conf.output_dir)?;
+    if conf.output_dir.exists() {
+        fs::remove_dir_all(&conf.output_dir)?;
+    }
 
     let tera = Tera::new("templates/**/*.html")?;
 
