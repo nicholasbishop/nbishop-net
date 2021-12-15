@@ -166,5 +166,7 @@ fn main() -> Result<()> {
         fs::write(&content.output, html)?;
     }
 
+    fs::copy("css/style.css", conf.output_dir.join("style.css"))?;
+
     Ok(())
 }
