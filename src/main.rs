@@ -1,6 +1,7 @@
 use anyhow::Result;
 use fs_err as fs;
 use std::path::Path;
+use tera::{Context, Tera};
 use walkdir::WalkDir;
 
 fn main() -> Result<()> {
@@ -9,6 +10,8 @@ fn main() -> Result<()> {
 
     // Delete the output directory entirely before filling it.
     fs::remove_dir_all(output_dir)?;
+
+    let tera = Tera::new("templates/**/*.html")?;
 
     for entry in WalkDir::new(content_dir) {
         let entry = entry?;
@@ -40,7 +43,12 @@ fn main() -> Result<()> {
             );
 
             let markdown = fs::read_to_string(entry.path())?;
-            let html = comrak::markdown_to_html(&markdown, &Default::default());
+            let markdown_html = comrak::markdown_to_html(&markdown, &Default::default());
+
+            let mut ctx = Context::new();
+            ctx.insert("title", "todo!");
+            ctx.insert("body", &markdown_html);
+            let html = tera.render("base.html", &ctx)?;
 
             fs::write(&output_path, html)?;
         }
