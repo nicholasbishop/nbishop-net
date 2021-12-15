@@ -4,14 +4,22 @@ use std::path::{Path, PathBuf};
 use tera::{Context, Tera};
 use walkdir::WalkDir;
 
+#[derive(Debug)]
 struct Conf {
     content_dir: PathBuf,
     output_dir: PathBuf,
 }
 
+#[derive(Debug)]
 struct Content {
+    /// Input path with the first component being `Conf::content_dir`.
     source: PathBuf,
+
+    /// Output path with the first component being `Conf::output_dir`.
     output: PathBuf,
+
+    /// Output path relative to `Conf::output_dir`.
+    rel_to_output_dir: PathBuf,
 }
 
 fn get_all_contents(conf: &Conf) -> Result<Vec<Content>> {
@@ -40,6 +48,7 @@ fn get_all_contents(conf: &Conf) -> Result<Vec<Content>> {
 
         contents.push(Content {
             source: entry.path().into(),
+            rel_to_output_dir: output_path.strip_prefix(&conf.output_dir).unwrap().into(),
             output: output_path,
         });
     }
@@ -60,7 +69,7 @@ fn main() -> Result<()> {
 
     let contents = get_all_contents(&conf)?;
 
-    for content in contents {
+    for content in &contents {
         let output_dir = content.output.parent().unwrap();
         if !output_dir.exists() {
             println!("mkdir {}", output_dir.display());
@@ -73,7 +82,26 @@ fn main() -> Result<()> {
             content.output.display()
         );
 
-        let markdown = fs::read_to_string(content.source)?;
+        let mut markdown = fs::read_to_string(&content.source)?;
+
+        // TODO: make more generic.
+        let dir_notes_placeholder = "$$$ dir notes\n";
+        if markdown.contains(dir_notes_placeholder) {
+            let notes = contents
+                .iter()
+                .filter_map(|c| {
+                    if let Ok(rest) = c.rel_to_output_dir.strip_prefix("notes") {
+                        Some(format!("* {}", rest.display()))
+                    } else {
+                        None
+                    }
+                })
+                .collect::<Vec<_>>();
+            let dir_notes = notes.join("\n");
+            dbg!(&dir_notes);
+            markdown = markdown.replace(dir_notes_placeholder, &dir_notes);
+        }
+
         let markdown_html = comrak::markdown_to_html(&markdown, &Default::default());
 
         let mut ctx = Context::new();
