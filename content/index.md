@@ -5,4 +5,4 @@
 
 ## Notes
 
-* [notes/c2rust]
+$$$ dir notes
