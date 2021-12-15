@@ -98,9 +98,12 @@ fn get_markdown_toc_list<P: AsRef<Path>>(
         .iter()
         .filter_map(|c| {
             if c.rel_to_output_dir.starts_with(prefix.as_ref()) {
+                let title = &c.front_matter["title"];
+                let date = &c.front_matter["date"];
                 Some(format!(
-                    "* [{}]({})",
-                    c.front_matter["title"],
+                    "* {} - [{}]({})",
+                    date,
+                    title,
                     c.rel_to_output_dir.display()
                 ))
             } else {
@@ -148,11 +151,15 @@ fn main() -> Result<()> {
             markdown = markdown.replace(dir_notes_placeholder, &dir_notes);
         }
 
+        // Prefix with title.
+        let title = &content.front_matter["title"];
+        markdown = format!("# {}\n{}", title, markdown);
+
         let markdown_html =
             comrak::markdown_to_html(&markdown, &Default::default());
 
         let mut ctx = Context::new();
-        ctx.insert("title", &content.front_matter["title"]);
+        ctx.insert("title", title);
         ctx.insert("body", &markdown_html);
         let html = tera.render("base.html", &ctx)?;
 
