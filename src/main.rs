@@ -16,11 +16,11 @@ struct Content {
     /// Input path with the first component being `Conf::content_dir`.
     source: PathBuf,
 
-    /// Output path with the first component being `Conf::output_dir`.
-    output: PathBuf,
+    /// Output file name.
+    output_name: String,
 
-    /// Output path relative to `Conf::output_dir`.
-    rel_to_output_dir: PathBuf,
+    /// Input directory relative to `Conf::content_dir`.
+    subdir: PathBuf,
 
     /// Front-matter map.
     front_matter: HashMap<String, String>,
@@ -48,11 +48,12 @@ fn get_all_contents(conf: &Conf) -> Result<Vec<Content>> {
         // Source path relative to the content dir.
         let rel_path = source.strip_prefix(&conf.content_dir)?;
 
-        // Create output subdirectory if needed.
-        let output_dir = conf.output_dir.join(rel_path.parent().unwrap());
-
-        let output_name = Path::new(entry.file_name()).with_extension("html");
-        let output_path = output_dir.join(output_name);
+        let output_name = rel_path
+            .with_extension("html")
+            .iter()
+            .map(|s| s.to_str().unwrap())
+            .collect::<Vec<_>>()
+            .join("_");
 
         // Read source and split out the front matter.
         let sep = "+++";
@@ -77,11 +78,8 @@ fn get_all_contents(conf: &Conf) -> Result<Vec<Content>> {
 
         contents.push(Content {
             source: source.into(),
-            rel_to_output_dir: output_path
-                .strip_prefix(&conf.output_dir)
-                .unwrap()
-                .into(),
-            output: output_path,
+            output_name,
+            subdir: rel_path.parent().unwrap().into(),
             front_matter,
             body: body.into(),
         });
@@ -92,20 +90,15 @@ fn get_all_contents(conf: &Conf) -> Result<Vec<Content>> {
 
 fn get_markdown_toc_list<P: AsRef<Path>>(
     contents: &[Content],
-    prefix: P,
+    subdir: P,
 ) -> String {
     contents
         .iter()
         .filter_map(|c| {
-            if c.rel_to_output_dir.starts_with(prefix.as_ref()) {
+            if c.subdir == subdir.as_ref() {
                 let title = &c.front_matter["title"];
                 let date = &c.front_matter["date"];
-                Some(format!(
-                    "* {} - [{}]({})",
-                    date,
-                    title,
-                    c.rel_to_output_dir.display()
-                ))
+                Some(format!("* {} - [{}]({})", date, title, c.output_name))
             } else {
                 None
             }
@@ -124,22 +117,19 @@ fn main() -> Result<()> {
     if conf.output_dir.exists() {
         fs::remove_dir_all(&conf.output_dir)?;
     }
+    fs::create_dir(&conf.output_dir)?;
 
     let tera = Tera::new("templates/**/*.html")?;
 
     let contents = get_all_contents(&conf)?;
 
     for content in &contents {
-        let output_dir = content.output.parent().unwrap();
-        if !output_dir.exists() {
-            println!("mkdir {}", output_dir.display());
-            fs::create_dir_all(&output_dir)?;
-        }
+        let output_path = conf.output_dir.join(&content.output_name);
 
         println!(
             "render {} -> {}",
             content.source.display(),
-            content.output.display()
+            output_path.display()
         );
 
         let mut markdown = content.body.clone();
@@ -163,7 +153,7 @@ fn main() -> Result<()> {
         ctx.insert("body", &markdown_html);
         let html = tera.render("base.html", &ctx)?;
 
-        fs::write(&content.output, html)?;
+        fs::write(&output_path, html)?;
     }
 
     fs::copy("css/style.css", conf.output_dir.join("style.css"))?;
