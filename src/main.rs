@@ -56,6 +56,20 @@ fn get_all_contents(conf: &Conf) -> Result<Vec<Content>> {
     Ok(contents)
 }
 
+fn get_markdown_toc_list<P: AsRef<Path>>(contents: &[Content], prefix: P) -> String {
+    contents
+        .iter()
+        .filter_map(|c| {
+            if let Ok(rest) = c.rel_to_output_dir.strip_prefix(prefix.as_ref()) {
+                Some(format!("* {}", rest.display()))
+            } else {
+                None
+            }
+        })
+        .collect::<Vec<_>>()
+        .join("\n")
+}
+
 fn main() -> Result<()> {
     let conf = Conf {
         content_dir: Path::new("content").into(),
@@ -87,18 +101,7 @@ fn main() -> Result<()> {
         // TODO: make more generic.
         let dir_notes_placeholder = "$$$ dir notes\n";
         if markdown.contains(dir_notes_placeholder) {
-            let notes = contents
-                .iter()
-                .filter_map(|c| {
-                    if let Ok(rest) = c.rel_to_output_dir.strip_prefix("notes") {
-                        Some(format!("* {}", rest.display()))
-                    } else {
-                        None
-                    }
-                })
-                .collect::<Vec<_>>();
-            let dir_notes = notes.join("\n");
-            dbg!(&dir_notes);
+            let dir_notes = get_markdown_toc_list(&contents, "notes");
             markdown = markdown.replace(dir_notes_placeholder, &dir_notes);
         }
 
