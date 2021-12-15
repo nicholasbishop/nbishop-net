@@ -7,6 +7,9 @@ fn main() -> Result<()> {
     let content_dir = Path::new("content");
     let output_dir = Path::new("output");
 
+    // Delete the output directory entirely before filling it.
+    fs::remove_dir_all(output_dir)?;
+
     for entry in WalkDir::new(content_dir) {
         let entry = entry?;
 
