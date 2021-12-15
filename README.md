@@ -1,3 +1,3 @@
 # nbishop-net
 
-Static website generator for [https://nbishop.net](nbishop.net).
+Static website generator for [nbishop.net](https://nbishop.net).
