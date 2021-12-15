@@ -1,5 +1,6 @@
-use anyhow::Result;
+use anyhow::{anyhow, Result};
 use fs_err as fs;
+use std::collections::HashMap;
 use std::path::{Path, PathBuf};
 use tera::{Context, Tera};
 use walkdir::WalkDir;
@@ -20,6 +21,12 @@ struct Content {
 
     /// Output path relative to `Conf::output_dir`.
     rel_to_output_dir: PathBuf,
+
+    /// Front-matter map.
+    front_matter: HashMap<String, String>,
+
+    /// Everything after the front matter.
+    body: String,
 }
 
 fn get_all_contents(conf: &Conf) -> Result<Vec<Content>> {
@@ -27,18 +34,19 @@ fn get_all_contents(conf: &Conf) -> Result<Vec<Content>> {
 
     for entry in WalkDir::new(&conf.content_dir) {
         let entry = entry?;
+        let source = entry.path();
 
         if !entry.file_type().is_file() {
             continue;
         }
 
         // For now ignore anything but markdown files.
-        if entry.path().extension().unwrap() != "md" {
+        if source.extension().unwrap() != "md" {
             continue;
         }
 
         // Source path relative to the content dir.
-        let rel_path = entry.path().strip_prefix(&conf.content_dir)?;
+        let rel_path = source.strip_prefix(&conf.content_dir)?;
 
         // Create output subdirectory if needed.
         let output_dir = conf.output_dir.join(rel_path.parent().unwrap());
@@ -46,13 +54,36 @@ fn get_all_contents(conf: &Conf) -> Result<Vec<Content>> {
         let output_name = Path::new(entry.file_name()).with_extension("html");
         let output_path = output_dir.join(output_name);
 
+        // Read source and split out the front matter.
+        let sep = "+++";
+        let all = fs::read_to_string(source)?;
+        let mut iter = all.splitn(3, sep).skip(1);
+        let front = iter.next().ok_or_else(|| {
+            anyhow!("missing front matter in {}", source.display())
+        })?;
+        let body = iter
+            .next()
+            .ok_or_else(|| anyhow!("missing body in {}", source.display()))?;
+        let mut front_matter = HashMap::new();
+        for line in front.lines() {
+            let parts = line.splitn(2, '=').collect::<Vec<_>>();
+            if parts.len() == 2 {
+                front_matter.insert(
+                    parts[0].trim().to_owned(),
+                    parts[1].trim().to_owned(),
+                );
+            }
+        }
+
         contents.push(Content {
-            source: entry.path().into(),
+            source: source.into(),
             rel_to_output_dir: output_path
                 .strip_prefix(&conf.output_dir)
                 .unwrap()
                 .into(),
             output: output_path,
+            front_matter,
+            body: body.into(),
         });
     }
 
@@ -109,7 +140,7 @@ fn main() -> Result<()> {
             content.output.display()
         );
 
-        let mut markdown = fs::read_to_string(&content.source)?;
+        let mut markdown = content.body.clone();
 
         // TODO: make more generic.
         let dir_notes_placeholder = "$$$ dir notes\n";
@@ -122,7 +153,7 @@ fn main() -> Result<()> {
             comrak::markdown_to_html(&markdown, &Default::default());
 
         let mut ctx = Context::new();
-        ctx.insert("title", "todo!");
+        ctx.insert("title", &content.front_matter["title"]);
         ctx.insert("body", &markdown_html);
         let html = tera.render("base.html", &ctx)?;
 
