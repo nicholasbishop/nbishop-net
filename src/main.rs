@@ -12,6 +12,12 @@ struct Conf {
 }
 
 #[derive(Debug)]
+struct FrontMatter {
+    title: String,
+    date: Option<String>,
+}
+
+#[derive(Debug)]
 struct Content {
     /// Input path with the first component being `Conf::content_dir`.
     source: PathBuf,
@@ -22,8 +28,8 @@ struct Content {
     /// Input directory relative to `Conf::content_dir`.
     subdir: PathBuf,
 
-    /// Front-matter map.
-    front_matter: HashMap<String, String>,
+    /// Front-matter.
+    front_matter: FrontMatter,
 
     /// Everything after the front matter.
     body: String,
@@ -69,12 +75,13 @@ fn get_all_contents(conf: &Conf) -> Result<Vec<Content>> {
         for line in front.lines() {
             let parts = line.splitn(2, ':').collect::<Vec<_>>();
             if parts.len() == 2 {
-                front_matter.insert(
-                    parts[0].trim().to_owned(),
-                    parts[1].trim().to_owned(),
-                );
+                front_matter.insert(parts[0].trim(), parts[1].trim());
             }
         }
+        let front_matter = FrontMatter {
+            title: front_matter["title"].to_owned(),
+            date: front_matter.get("date").map(|s| s.to_owned().to_owned()),
+        };
 
         contents.push(Content {
             source: source.into(),
@@ -96,8 +103,8 @@ fn get_markdown_toc_list<P: AsRef<Path>>(
         .iter()
         .filter_map(|c| {
             if c.subdir == subdir.as_ref() {
-                let title = &c.front_matter["title"];
-                let date = &c.front_matter["date"];
+                let title = &c.front_matter.title;
+                let date = &c.front_matter.date.as_ref().unwrap();
                 Some(format!("* {} - [{}]({})", date, title, c.output_name))
             } else {
                 None
@@ -143,8 +150,7 @@ fn main() -> Result<()> {
 
         // Prefix with title and extras.
         let mut prefix_lines = Vec::new();
-        let title = &content.front_matter["title"];
-        prefix_lines.push(format!("# {}", title));
+        prefix_lines.push(format!("# {}", content.front_matter.title));
         if content.output_name != "index.html" {
             prefix_lines.push("[« Home](index.html)".into());
         }
@@ -154,7 +160,7 @@ fn main() -> Result<()> {
             comrak::markdown_to_html(&markdown, &Default::default());
 
         let mut ctx = Context::new();
-        ctx.insert("title", title);
+        ctx.insert("title", &content.front_matter.title);
         ctx.insert("body", &markdown_html);
         let html = tera.render("base.html", &ctx)?;
 
