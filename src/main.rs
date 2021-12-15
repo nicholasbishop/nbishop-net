@@ -141,9 +141,14 @@ fn main() -> Result<()> {
             markdown = markdown.replace(dir_notes_placeholder, &dir_notes);
         }
 
-        // Prefix with title.
+        // Prefix with title and extras.
+        let mut prefix_lines = Vec::new();
         let title = &content.front_matter["title"];
-        markdown = format!("# {}\n{}", title, markdown);
+        prefix_lines.push(format!("# {}", title));
+        if content.output_name != "index.html" {
+            prefix_lines.push("[« Home](index.html)".into());
+        }
+        markdown = format!("{}\n{}", prefix_lines.join("\n"), markdown);
 
         let markdown_html =
             comrak::markdown_to_html(&markdown, &Default::default());
