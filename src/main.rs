@@ -48,7 +48,10 @@ fn get_all_contents(conf: &Conf) -> Result<Vec<Content>> {
 
         contents.push(Content {
             source: entry.path().into(),
-            rel_to_output_dir: output_path.strip_prefix(&conf.output_dir).unwrap().into(),
+            rel_to_output_dir: output_path
+                .strip_prefix(&conf.output_dir)
+                .unwrap()
+                .into(),
             output: output_path,
         });
     }
@@ -56,11 +59,15 @@ fn get_all_contents(conf: &Conf) -> Result<Vec<Content>> {
     Ok(contents)
 }
 
-fn get_markdown_toc_list<P: AsRef<Path>>(contents: &[Content], prefix: P) -> String {
+fn get_markdown_toc_list<P: AsRef<Path>>(
+    contents: &[Content],
+    prefix: P,
+) -> String {
     contents
         .iter()
         .filter_map(|c| {
-            if let Ok(rest) = c.rel_to_output_dir.strip_prefix(prefix.as_ref()) {
+            if let Ok(rest) = c.rel_to_output_dir.strip_prefix(prefix.as_ref())
+            {
                 Some(format!("* {}", rest.display()))
             } else {
                 None
@@ -105,7 +112,8 @@ fn main() -> Result<()> {
             markdown = markdown.replace(dir_notes_placeholder, &dir_notes);
         }
 
-        let markdown_html = comrak::markdown_to_html(&markdown, &Default::default());
+        let markdown_html =
+            comrak::markdown_to_html(&markdown, &Default::default());
 
         let mut ctx = Context::new();
         ctx.insert("title", "todo!");
