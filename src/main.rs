@@ -68,7 +68,11 @@ fn get_markdown_toc_list<P: AsRef<Path>>(
         .filter_map(|c| {
             if let Ok(rest) = c.rel_to_output_dir.strip_prefix(prefix.as_ref())
             {
-                Some(format!("* {}", rest.display()))
+                Some(format!(
+                    "* [{}]({})",
+                    rest.display(),
+                    c.rel_to_output_dir.display()
+                ))
             } else {
                 None
             }
