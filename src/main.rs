@@ -1,3 +1,4 @@
+mod publish;
 mod render;
 
 use anyhow::Result;
@@ -15,6 +16,10 @@ fn main() -> Result<()> {
     let opt: Opt = argh::from_env();
 
     render::render()?;
+
+    if opt.publish {
+        publish::publish()?;
+    }
 
     Ok(())
 }
