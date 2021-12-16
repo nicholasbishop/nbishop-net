@@ -7,7 +7,7 @@ use std::path::Path;
 pub fn publish() -> Result<()> {
     // Setup notes:
     // - Create a personal access token with the `public_repo` scope
-    // - repo settings > Environments > github-pages > Add secret
+    // - repo settings > Secrets > Repository secrets > Add secret
     //   - Name: TOKEN
 
     let branch = "gh-pages";
