@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="x-ua-compatible" content="ie=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Building c2rust</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+
+  <body>
+    <h1>Building c2rust</h1>
+<p><a href="index.html">« Home</a></p>
+<p><a href="https://github.com/immunant/c2rust">c2rust</a> is a really neat and
+useful tool :) Unfortunately I had some difficulty building c2rust,
+here are some notes on how I got it to work.</p>
+<p>The c2rust build depends on the host environment, so basically you
+don't want to build it there or it will break. Building it in a
+container is the way to go. The c2rust repo has a docker subdirectory,
+but for some reason it just seems to be for setting up a build
+environment to build c2rust; it doesn't go all the way and just give
+you the binary. And the instructions don't actually say what to do
+with the scripts there, at least as far as I can tell (I may have
+missed something!), so it's all a bit confusing.</p>
+<p>Here's what worked for me on Fedora:</p>
+<ol>
+<li>
+<p>Create a <code>Containerfile</code>:</p>
+<pre><code class="language-docker">FROM docker://immunant/c2rust:archlinux-base-latest
+
+RUN git clone https://github.com/immunant/c2rust.git
+WORKDIR c2rust
+RUN cargo +nightly-2019-12-05 build --release --locked
+
+ENTRYPOINT [&quot;/c2rust/target/release/c2rust&quot;]
+</code></pre>
+</li>
+<li>
+<p>Build it (this will take a while):</p>
+<pre><code>podman build -f Containerfile -t c2rust
+</code></pre>
+</li>
+<li>
+<p>Run it in the container:</p>
+<pre><code>podman run -v$PWD:/host:z c2rust transpile --output-dir /host/transpile/ /host/compile_commands.json
+</code></pre>
+</li>
+</ol>
+<p>That last step assumes that you have a <code>compile_commands.json</code> in the
+current directory and that the paths it references are under
+<code>/host</code>. The output will go to <code>/host/transpile</code>.</p>
+
+
+    <hr />
+    © 2021 <a href="mailto:nbishop@nbishop.net">Nicholas Bishop</a>
+    •
+    <a href="index.html">Home</a>
+    •
+    <a href="https://github.com/nicholasbishop/nbishop-net">Repo</a>
+  </body>
+</html>
