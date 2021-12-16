@@ -66,10 +66,17 @@ pub fn publish() -> Result<()> {
     // Add all the files.
     Command::with_args("git", &["-C", repo_path, "add", "*"]).run()?;
 
-    // Commit.
+    // Commit. Allow it to be empty because the output may be unchanged.
     Command::with_args(
         "git",
-        &["-C", repo_path, "commit", "-m", "Automatic publish"],
+        &[
+            "-C",
+            repo_path,
+            "commit",
+            "--allow-empty",
+            "-m",
+            "Automatic publish",
+        ],
     )
     .run()?;
 
