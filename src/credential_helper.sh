@@ -1,4 +1,4 @@
 #!/bin/sh
 
 echo username="nicholasbishop"
-echo password="${TOKEN}"
+echo password="${GH_TOKEN}"

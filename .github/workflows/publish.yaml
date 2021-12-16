@@ -20,3 +20,5 @@ jobs:
         with:
           command: run
           args: -- --publish
+        env:
+          GH_TOKEN: ${{ secrets.TOKEN }}
