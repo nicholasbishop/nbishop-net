@@ -49,9 +49,14 @@ pub fn publish() -> Result<()> {
     // Check out the branch.
     Command::with_args("git", &["-C", repo_path, "checkout", branch]).run()?;
 
-    // Delete all the files currently present. Allow this to fail in
-    // case there's nothing there yet.
-    Command::with_args("git", &["-C", repo_path, "rm", "*"])
+    // Delete all the HTML files currently present. Allow this to fail
+    // in case there's nothing there yet.
+    //
+    // TODO: really we want to delete everything to prevent any stale
+    // files from existing. But we don't want to delete the
+    // automatically-added CNAME file. So for now compromise and just
+    // delete html files.
+    Command::with_args("git", &["-C", repo_path, "rm", "*.html"])
         .disable_check()
         .run()?;
 
