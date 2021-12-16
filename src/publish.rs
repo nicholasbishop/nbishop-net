@@ -22,20 +22,18 @@ pub fn publish() -> Result<()> {
     // Create an empty repo.
     Command::with_args("git", &["init", repo_path]).run()?;
 
+    let set_config = |key, val| {
+        Command::with_args("git", &["-C", repo_path, "config", key, val]).run()
+    };
+
     // Configure the credential helper. The credential helper helps
     // avoid showing the private token.
     let helper_path = env::current_dir()?.join("src/credential_helper.sh");
-    Command::with_args(
-        "git",
-        &[
-            "-C",
-            repo_path,
-            "config",
-            "credential.helper",
-            helper_path.to_str().unwrap(),
-        ],
-    )
-    .run()?;
+    set_config("credential.helper", helper_path.to_str().unwrap())?;
+
+    // Set identify, required for commit.
+    set_config("user.email", "publisher@nbishop.net")?;
+    set_config("user.name", "Automatic Publisher")?;
 
     // Add the remote.
     Command::with_args(
