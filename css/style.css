@@ -1,8 +1,23 @@
 body {
     background-color: #eee;
-    color: #334;
+    color: #445;
     font-family: sans;
 
     max-width: 60em;
     margin: auto;
+
+    padding: 0.5em;
+}
+
+a {
+    color: #66b;
+}
+
+a:visited {
+    color: #959;
+}
+
+pre {
+    border: 1px solid #999;
+    padding: 0.5em;
 }
