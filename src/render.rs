@@ -1,5 +1,7 @@
 use anyhow::{anyhow, Result};
 use camino::{Utf8Path, Utf8PathBuf};
+use comrak::plugins::syntect::SyntectAdapter;
+use comrak::{ComrakOptions, ComrakPlugins};
 use fs_err as fs;
 use std::collections::HashMap;
 use tera::{Context, Tera};
@@ -127,6 +129,13 @@ pub fn render() -> Result<()> {
     }
     fs::create_dir(&conf.output_dir)?;
 
+    // Create code-highlighting plugin.
+    let adapter = SyntectAdapter::new("base16-ocean.light");
+    let options = ComrakOptions::default();
+    let mut plugins = ComrakPlugins::default();
+    plugins.render.codefence_syntax_highlighter = Some(&adapter);
+
+    // Load templates.
     let tera = Tera::new("templates/**/*.html")?;
 
     let contents = get_all_contents(&conf)?;
@@ -153,8 +162,9 @@ pub fn render() -> Result<()> {
         }
         markdown = format!("{}\n{}", prefix_lines.join("\n"), markdown);
 
-        let markdown_html =
-            comrak::markdown_to_html(&markdown, &Default::default());
+        let markdown_html = comrak::markdown_to_html_with_plugins(
+            &markdown, &options, &plugins,
+        );
 
         let mut ctx = Context::new();
         ctx.insert("title", &content.front_matter.title);
