@@ -174,6 +174,7 @@ pub fn render() -> Result<()> {
         fs::write(&output_path, html)?;
     }
 
+    fs::copy("content/favicon.png", conf.output_dir.join("favicon.png"))?;
     fs::copy("css/style.css", conf.output_dir.join("style.css"))?;
 
     Ok(())
