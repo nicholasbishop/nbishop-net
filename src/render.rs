@@ -174,7 +174,9 @@ pub fn render() -> Result<()> {
         fs::write(&output_path, html)?;
     }
 
+    // TODO: generalize this
     fs::copy("content/favicon.png", conf.output_dir.join("favicon.png"))?;
+    fs::copy("content/h1.png", conf.output_dir.join("h1.png"))?;
     fs::copy("css/style.css", conf.output_dir.join("style.css"))?;
 
     Ok(())
