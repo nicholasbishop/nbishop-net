@@ -42,3 +42,7 @@ h1 {
     padding: 0.2em;
     padding-left: 0.4em;
 }
+
+#sfc {
+    border: 1px solid #ccc;
+}
