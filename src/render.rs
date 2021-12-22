@@ -1,7 +1,7 @@
 use anyhow::{anyhow, Result};
 use camino::{Utf8Path, Utf8PathBuf};
 use comrak::plugins::syntect::SyntectAdapter;
-use comrak::{ComrakOptions, ComrakPlugins};
+use comrak::{ComrakOptions, ComrakPlugins, ComrakRenderOptions};
 use fs_err as fs;
 use std::collections::HashMap;
 use tera::{Context, Tera};
@@ -131,7 +131,13 @@ pub fn render() -> Result<()> {
 
     // Create code-highlighting plugin.
     let adapter = SyntectAdapter::new("base16-ocean.light");
-    let options = ComrakOptions::default();
+    let options = ComrakOptions {
+        render: ComrakRenderOptions {
+            unsafe_: true,
+            ..Default::default()
+        },
+        ..Default::default()
+    };
     let mut plugins = ComrakPlugins::default();
     plugins.render.codefence_syntax_highlighter = Some(&adapter);
 
@@ -174,8 +180,12 @@ pub fn render() -> Result<()> {
         fs::write(&output_path, html)?;
     }
 
-    let extra_sources =
-        ["content/favicon.png", "content/h1.png", "css/style.css"];
+    let extra_sources = [
+        "content/favicon.png",
+        "content/h1.png",
+        "content/sfc.png",
+        "css/style.css",
+    ];
     for src in extra_sources {
         fs::copy(
             src,

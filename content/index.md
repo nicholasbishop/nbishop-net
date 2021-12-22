@@ -16,3 +16,5 @@ $$$ dir notes
 * [writedisk](https://github.com/nicholasbishop/writedisk) - Small utility for writing a disk image to a USB drive
 * [zone-detect-rs](https://github.com/nicholasbishop/zone-detect-rs) - Rust version of the ZoneDetect C library
 * [all github repositories](https://github.com/nicholasbishop?tab=repositories)
+
+<a href="https://sfconservancy.org/sustainer"><img id="sfc" src="sfc.png" title="Become a Conservancy Sustainer!"></img></a>
