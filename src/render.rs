@@ -160,14 +160,7 @@ pub fn render() -> Result<()> {
             markdown = markdown.replace(dir_notes_placeholder, &dir_notes);
         }
 
-        // Prefix with title and extras.
-        let mut prefix_lines = Vec::new();
-        prefix_lines.push(format!("# {}", content.front_matter.title));
-        if content.output_name != "index.html" {
-            prefix_lines.push("[« Home](index.html)".into());
-        }
-        markdown = format!("{}\n{}", prefix_lines.join("\n"), markdown);
-
+        let show_home_link = content.output_name != "index.html";
         let markdown_html = comrak::markdown_to_html_with_plugins(
             &markdown, &options, &plugins,
         );
@@ -175,6 +168,7 @@ pub fn render() -> Result<()> {
         let mut ctx = Context::new();
         ctx.insert("title", &content.front_matter.title);
         ctx.insert("body", &markdown_html);
+        ctx.insert("show_home_link", &show_home_link);
         let html = tera.render("base.html", &ctx)?;
 
         fs::write(&output_path, html)?;
