@@ -16,7 +16,9 @@
     <a href="index.html">« Home</a>
     {% endif -%}
 
-    {{ body | safe }}
+    <div id="content">
+      {{ body | safe }}
+    </div>
 
     <hr />
     © 2021 <a href="mailto:nbishop@nbishop.net">Nicholas Bishop</a>

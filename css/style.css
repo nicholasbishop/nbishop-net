@@ -5,8 +5,6 @@ body {
 
     max-width: 60em;
     margin: auto;
-
-    padding: 0.5em;
 }
 
 a {
@@ -38,6 +36,7 @@ h1 {
     background-size: 100% 100%;
     color: #fff;
     text-shadow: 0px 0px 4px #339;
+    margin-bottom: 0.2em;
 
     border-top: 2px solid #fcc;
     border-bottom: 2px solid #ccf;
@@ -54,4 +53,14 @@ hr {
 
 #sfc {
     border: 1px solid #ccc;
+}
+
+@media (max-width : 60em) {
+    h1 {
+        margin-top: 0;
+    }
+
+    #content {
+        margin: 0.5em;
+    }
 }
