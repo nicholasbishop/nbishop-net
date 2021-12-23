@@ -17,6 +17,4 @@ $$$ dir notes
 * [zone-detect-rs](https://github.com/nicholasbishop/zone-detect-rs) - Rust version of the ZoneDetect C library
 * [all github repositories](https://github.com/nicholasbishop?tab=repositories)
 
-___
-
 <a href="https://sfconservancy.org/sustainer"><img id="sfc" src="sfc.png" title="Become a Conservancy Sustainer!"></img></a>
