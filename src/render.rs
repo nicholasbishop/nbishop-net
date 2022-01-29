@@ -20,6 +20,24 @@ struct FrontMatter {
 }
 
 #[derive(Debug)]
+struct MarkdownContent {
+    /// Front-matter.
+    front_matter: FrontMatter,
+
+    /// Everything after the front matter.
+    body: String,
+}
+
+#[derive(Debug)]
+enum ContentType {
+    /// Markdown content that must be rendered.
+    Markdown(MarkdownContent),
+
+    /// Regular file that can just be copied to the output.
+    PlainFile,
+}
+
+#[derive(Debug)]
 struct Content {
     /// Input path with the first component being `Conf::content_dir`.
     source: Utf8PathBuf,
@@ -30,11 +48,36 @@ struct Content {
     /// Input directory relative to `Conf::content_dir`.
     subdir: Utf8PathBuf,
 
-    /// Front-matter.
-    front_matter: FrontMatter,
+    content_type: ContentType,
+}
 
-    /// Everything after the front matter.
-    body: String,
+fn get_markdown_content(source: &Utf8Path) -> Result<MarkdownContent> {
+    // Read source and split out the front matter.
+    let sep = "+++";
+    let all = fs::read_to_string(source)?;
+    let mut iter = all.splitn(3, sep).skip(1);
+    let front = iter
+        .next()
+        .ok_or_else(|| anyhow!("missing front matter in {}", source))?;
+    let body = iter
+        .next()
+        .ok_or_else(|| anyhow!("missing body in {}", source))?;
+    let mut front_matter = HashMap::new();
+    for line in front.lines() {
+        let parts = line.splitn(2, ':').collect::<Vec<_>>();
+        if parts.len() == 2 {
+            front_matter.insert(parts[0].trim(), parts[1].trim());
+        }
+    }
+    let front_matter = FrontMatter {
+        title: front_matter["title"].to_owned(),
+        date: front_matter.get("date").map(|s| s.to_owned().to_owned()),
+    };
+
+    Ok(MarkdownContent {
+        front_matter,
+        body: body.into(),
+    })
 }
 
 fn get_all_contents(conf: &Conf) -> Result<Vec<Content>> {
@@ -50,48 +93,30 @@ fn get_all_contents(conf: &Conf) -> Result<Vec<Content>> {
             continue;
         }
 
-        // For now ignore anything but markdown files.
-        if source.extension().unwrap() != "md" {
-            continue;
-        }
-
         // Source path relative to the content dir.
         let rel_path = source.strip_prefix(&conf.content_dir)?;
 
-        let output_name = rel_path
-            .with_extension("html")
-            .iter()
-            .collect::<Vec<_>>()
-            .join("_");
+        let mut output_name = rel_path.iter().collect::<Vec<_>>().join("_");
 
-        // Read source and split out the front matter.
-        let sep = "+++";
-        let all = fs::read_to_string(source)?;
-        let mut iter = all.splitn(3, sep).skip(1);
-        let front = iter
-            .next()
-            .ok_or_else(|| anyhow!("missing front matter in {}", source))?;
-        let body = iter
-            .next()
-            .ok_or_else(|| anyhow!("missing body in {}", source))?;
-        let mut front_matter = HashMap::new();
-        for line in front.lines() {
-            let parts = line.splitn(2, ':').collect::<Vec<_>>();
-            if parts.len() == 2 {
-                front_matter.insert(parts[0].trim(), parts[1].trim());
-            }
+        let extension = source.extension().unwrap();
+        let content_type;
+        if extension == "md" {
+            // TODO: could be more precise with this.
+            output_name = output_name.replacen(".md", ".html", 1);
+
+            content_type = ContentType::Markdown(get_markdown_content(source)?);
+        } else if extension == "css" || extension == "png" {
+            content_type = ContentType::PlainFile;
+        } else {
+            println!("ignoring {}", source);
+            continue;
         }
-        let front_matter = FrontMatter {
-            title: front_matter["title"].to_owned(),
-            date: front_matter.get("date").map(|s| s.to_owned().to_owned()),
-        };
 
         contents.push(Content {
             source: source.into(),
             output_name,
             subdir: rel_path.parent().unwrap().into(),
-            front_matter,
-            body: body.into(),
+            content_type,
         });
     }
 
@@ -105,9 +130,15 @@ fn get_markdown_toc_list<P: AsRef<Utf8Path>>(
     contents
         .iter()
         .filter_map(|c| {
+            let md = if let ContentType::Markdown(md) = &c.content_type {
+                md
+            } else {
+                return None;
+            };
+
             if c.subdir == subdir.as_ref() {
-                let title = &c.front_matter.title;
-                let date = &c.front_matter.date.as_ref().unwrap();
+                let title = &md.front_matter.title;
+                let date = &md.front_matter.date.as_ref().unwrap();
                 Some(format!("* {} - [{}]({})", date, title, c.output_name))
             } else {
                 None
@@ -149,38 +180,41 @@ pub fn render() -> Result<()> {
     for content in &contents {
         let output_path = conf.output_dir.join(&content.output_name);
 
-        println!("render {} -> {}", content.source, output_path);
+        if let ContentType::Markdown(md) = &content.content_type {
+            println!("render {} -> {}", content.source, output_path);
 
-        let mut markdown = content.body.clone();
+            let mut markdown = md.body.clone();
 
-        // TODO: make more generic.
-        let dir_names = ["log", "notes"];
-        for name in dir_names {
-            let placeholder = format!("$$$ dir {}\n", name);
-            if markdown.contains(&placeholder) {
-                let toc = get_markdown_toc_list(&contents, name);
-                markdown = markdown.replace(&placeholder, &toc);
+            // TODO: make more generic.
+            let dir_names = ["log", "notes"];
+            for name in dir_names {
+                let placeholder = format!("$$$ dir {}\n", name);
+                if markdown.contains(&placeholder) {
+                    let toc = get_markdown_toc_list(&contents, name);
+                    markdown = markdown.replace(&placeholder, &toc);
+                }
             }
+
+            let show_home_link = content.output_name != "index.html";
+            let markdown_html = comrak::markdown_to_html_with_plugins(
+                &markdown, &options, &plugins,
+            );
+
+            let mut ctx = Context::new();
+            ctx.insert("title", &md.front_matter.title);
+            ctx.insert("body", &markdown_html);
+            ctx.insert("show_home_link", &show_home_link);
+            let html = tera.render("base.html", &ctx)?;
+
+            fs::write(&output_path, html)?;
+        } else {
+            println!("copy {} -> {}", content.source, output_path);
+            fs::copy(&content.source, &output_path)?;
         }
-
-        let show_home_link = content.output_name != "index.html";
-        let markdown_html = comrak::markdown_to_html_with_plugins(
-            &markdown, &options, &plugins,
-        );
-
-        let mut ctx = Context::new();
-        ctx.insert("title", &content.front_matter.title);
-        ctx.insert("body", &markdown_html);
-        ctx.insert("show_home_link", &show_home_link);
-        let html = tera.render("base.html", &ctx)?;
-
-        fs::write(&output_path, html)?;
     }
 
+    // TODO
     let extra_sources = [
-        "content/favicon.png",
-        "content/h1.png",
-        "content/sfc.png",
         "css/style.css",
     ];
     for src in extra_sources {
