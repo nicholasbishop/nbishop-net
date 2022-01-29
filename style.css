@@ -55,6 +55,10 @@ hr {
     border: 1px solid #ccc;
 }
 
+.photo {
+    border: 1px solid #cce;
+}
+
 pre {
     overflow: auto;
 }
