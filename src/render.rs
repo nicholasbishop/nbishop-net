@@ -213,17 +213,5 @@ pub fn render() -> Result<()> {
         }
     }
 
-    // TODO
-    let extra_sources = [
-        "css/style.css",
-    ];
-    for src in extra_sources {
-        fs::copy(
-            src,
-            conf.output_dir
-                .join(Utf8Path::new(src).file_name().unwrap()),
-        )?;
-    }
-
     Ok(())
 }
