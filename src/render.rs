@@ -105,7 +105,7 @@ fn get_all_contents(conf: &Conf) -> Result<Vec<Content>> {
             output_name = output_name.replacen(".md", ".html", 1);
 
             content_type = ContentType::Markdown(get_markdown_content(source)?);
-        } else if extension == "css" || extension == "png" {
+        } else if extension == "css" || extension == "jpg" || extension == "png" {
             content_type = ContentType::PlainFile;
         } else {
             println!("ignoring {}", source);
