@@ -154,10 +154,13 @@ pub fn render() -> Result<()> {
         let mut markdown = content.body.clone();
 
         // TODO: make more generic.
-        let dir_notes_placeholder = "$$$ dir notes\n";
-        if markdown.contains(dir_notes_placeholder) {
-            let dir_notes = get_markdown_toc_list(&contents, "notes");
-            markdown = markdown.replace(dir_notes_placeholder, &dir_notes);
+        let dir_names = ["log", "notes"];
+        for name in dir_names {
+            let placeholder = format!("$$$ dir {}\n", name);
+            if markdown.contains(&placeholder) {
+                let toc = get_markdown_toc_list(&contents, name);
+                markdown = markdown.replace(&placeholder, &toc);
+            }
         }
 
         let show_home_link = content.output_name != "index.html";
