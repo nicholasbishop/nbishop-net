@@ -14,8 +14,13 @@
 
   <body>
     <h1>{{ title }}</h1>
+
     {% if show_home_link -%}
     <a class="content" href="index.html">« Home</a>
+    <!-- Little hack: only show date if not on the home page -->
+    <p>
+      Created {{ created_date }}, last updated {{ updated_date }}
+    </p>
     {% endif -%}
 
     <div class="content">

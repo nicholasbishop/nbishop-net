@@ -1,10 +1,12 @@
-use anyhow::{anyhow, Result};
+use anyhow::{anyhow, bail, Result};
 use camino::{Utf8Path, Utf8PathBuf};
 use comrak::plugins::syntect::SyntectAdapter;
 use comrak::{ComrakOptions, ComrakPlugins, ComrakRenderOptions};
 use fs_err as fs;
 use std::collections::HashMap;
+use std::process::Command;
 use tera::{Context, Tera};
+use time::OffsetDateTime;
 use walkdir::WalkDir;
 
 #[derive(Debug)]
@@ -41,6 +43,10 @@ enum ContentType {
 struct Content {
     /// Input path with the first component being `Conf::content_dir`.
     source: Utf8PathBuf,
+
+    /// Date and time when the input was last modified. This uses the
+    /// git commit date.
+    last_modified: OffsetDateTime,
 
     /// Output file name.
     output_name: String,
@@ -80,6 +86,20 @@ fn get_markdown_content(source: &Utf8Path) -> Result<MarkdownContent> {
     })
 }
 
+fn get_last_modified(path: &Utf8Path) -> Result<OffsetDateTime> {
+    // "%ct" is the committer date formatted in unix time.
+    let output = Command::new("git")
+        .args(&["log", "-1", "--format=format:%ct"])
+        .arg(path)
+        .output()?;
+    if !output.status.success() {
+        bail!("failed to get date of {}: {:?}", path, output);
+    }
+    let s = std::str::from_utf8(&output.stdout).unwrap();
+    let seconds: i64 = s.parse().unwrap();
+    Ok(OffsetDateTime::from_unix_timestamp(seconds)?)
+}
+
 fn get_all_contents(conf: &Conf) -> Result<Vec<Content>> {
     let mut contents = Vec::new();
 
@@ -115,6 +135,7 @@ fn get_all_contents(conf: &Conf) -> Result<Vec<Content>> {
 
         contents.push(Content {
             source: source.into(),
+            last_modified: get_last_modified(source)?,
             output_name,
             subdir: rel_path.parent().unwrap().into(),
             content_type,
@@ -215,6 +236,14 @@ pub fn render() -> Result<()> {
 
             let mut ctx = Context::new();
             ctx.insert("title", &md.front_matter.title);
+            ctx.insert(
+                "created_date",
+                &md.front_matter.date.as_ref().unwrap_or(&"?".to_string()),
+            );
+            ctx.insert(
+                "updated_date",
+                &content.last_modified.date().to_string(),
+            );
             ctx.insert("body", &markdown_html);
             ctx.insert("show_home_link", &show_home_link);
             let html = tera.render("base.html", &ctx)?;
