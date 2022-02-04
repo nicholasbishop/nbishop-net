@@ -88,7 +88,7 @@ fn get_markdown_content(source: &Utf8Path) -> Result<MarkdownContent> {
 
 fn get_last_modified(path: &Utf8Path) -> Result<OffsetDateTime> {
     // TODO
-    Command::run("ls").args(&["-lR"]).status()?;
+    Command::new("ls").args(&["-lR"]).status()?;
 
     // "%ct" is the committer date formatted in unix time.
     let output = Command::new("git")
