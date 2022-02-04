@@ -87,9 +87,6 @@ fn get_markdown_content(source: &Utf8Path) -> Result<MarkdownContent> {
 }
 
 fn get_last_modified(path: &Utf8Path) -> Result<OffsetDateTime> {
-    // TODO
-    Command::new("ls").args(&["-lR"]).status()?;
-
     // "%ct" is the committer date formatted in unix time.
     let output = Command::new("git")
         .args(&["log", "-1", "--format=format:%ct"])
@@ -187,6 +184,10 @@ fn get_markdown_toc_list<P: AsRef<Utf8Path>>(
 }
 
 pub fn render() -> Result<()> {
+    // TODO
+    Command::new("git").args(&["log"]).status()?;
+    Command::new("ls").args(&["-lR"]).status()?;
+
     let conf = Conf {
         content_dir: "content".into(),
         output_dir: "output".into(),
