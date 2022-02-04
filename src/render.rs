@@ -121,6 +121,16 @@ fn get_all_contents(conf: &Conf) -> Result<Vec<Content>> {
         });
     }
 
+    // Sort by (date, name).
+    contents.sort_unstable_by_key(|c| {
+        let date = if let ContentType::Markdown(md) = &c.content_type {
+            md.front_matter.date.clone()
+        } else {
+            None
+        };
+        (date, c.output_name.clone())
+    });
+
     Ok(contents)
 }
 
@@ -130,6 +140,8 @@ fn get_markdown_toc_list<P: AsRef<Utf8Path>>(
 ) -> String {
     contents
         .iter()
+        // Reverse iteration so that newer entries come first.
+        .rev()
         .filter_map(|c| {
             let md = if let ContentType::Markdown(md) = &c.content_type {
                 md
