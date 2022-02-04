@@ -96,6 +96,7 @@ fn get_last_modified(path: &Utf8Path) -> Result<OffsetDateTime> {
         bail!("failed to get date of {}: {:?}", path, output);
     }
     let s = std::str::from_utf8(&output.stdout).unwrap();
+    dbg!(s);
     let seconds: i64 = s.parse().unwrap();
     Ok(OffsetDateTime::from_unix_timestamp(seconds)?)
 }
