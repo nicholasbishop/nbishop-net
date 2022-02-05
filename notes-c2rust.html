@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="x-ua-compatible" content="ie=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Building c2rust</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="icon" href="favicon.png" />
+
+    <script defer data-domain="nbishop.net" src="https://plausible.io/js/plausible.js"></script>
+  </head>
+
+  <body>
+    <h1>Building c2rust</h1>
+
+    <a class="content" href="index.html">« Home</a>
+    <!-- Little hack: only show date if not on the home page -->
+    <p class="content date">Created 2021-06-05, last updated 2021-12-15</p>
+    <div class="content">
+      <p><a href="https://github.com/immunant/c2rust">c2rust</a> is a really neat and
+useful tool :) Unfortunately I had some difficulty building c2rust,
+here are some notes on how I got it to work.</p>
+<p>The c2rust build depends on the host environment, so basically you
+don't want to build it there or it will break. Building it in a
+container is the way to go. The c2rust repo has a docker subdirectory,
+but for some reason it just seems to be for setting up a build
+environment to build c2rust; it doesn't go all the way and just give
+you the binary. And the instructions don't actually say what to do
+with the scripts there, at least as far as I can tell (I may have
+missed something!), so it's all a bit confusing.</p>
+<p>Here's what worked for me on Fedora:</p>
+<ol>
+<li>
+<p>Create a <code>Containerfile</code>:</p>
+<pre style="background-color:#eff1f5;"><code class="language-docker">
+<span style="color:#4f5b66;">FROM docker://immunant/c2rust:archlinux-base-latest
+</span><span style="color:#4f5b66;">
+</span><span style="color:#4f5b66;">RUN git clone https://github.com/immunant/c2rust.git
+</span><span style="color:#4f5b66;">WORKDIR c2rust
+</span><span style="color:#4f5b66;">RUN cargo +nightly-2019-12-05 build --release --locked
+</span><span style="color:#4f5b66;">
+</span><span style="color:#4f5b66;">ENTRYPOINT [&quot;/c2rust/target/release/c2rust&quot;]
+</span>
+</code></pre>
+</li>
+<li>
+<p>Build it (this will take a while):</p>
+<pre style="background-color:#eff1f5;"><code>
+<span style="color:#4f5b66;">podman build -f Containerfile -t c2rust
+</span>
+</code></pre>
+</li>
+<li>
+<p>Run it in the container:</p>
+<pre style="background-color:#eff1f5;"><code>
+<span style="color:#4f5b66;">podman run -v$PWD:/host:z c2rust transpile --output-dir /host/transpile/ /host/compile_commands.json
+</span>
+</code></pre>
+</li>
+</ol>
+<p>That last step assumes that you have a <code>compile_commands.json</code> in the
+current directory and that the paths it references are under
+<code>/host</code>. The output will go to <code>/host/transpile</code>.</p>
+
+    </div>
+
+    <hr />
+
+    <div class="content">
+      © 2022 <a href="mailto:nbishop@nbishop.net">Nicholas Bishop</a>
+      •
+      <a href="index.html">Home</a>
+      •
+      <a href="https://github.com/nicholasbishop/nbishop-net">Repo</a>
+
+      <!-- License -->
+      <div id="license">
+        Unless otherwise noted, content is licensed under
+        <a href="https://creativecommons.org/licenses/by/4.0">CC BY 4.0</a>.
+        Code blocks are <em>additionally</em> available under
+        <a href="https://creativecommons.org/share-your-work/public-domain/cc0">CC0</a> and
+        <a href="https://www.apache.org/licenses/LICENSE-2.0.txt">Apache License version 2.0</a>
+        at your option.
+      </div>
+    </div>
+  </body>
+</html>
