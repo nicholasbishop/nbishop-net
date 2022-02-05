@@ -45,6 +45,10 @@ h1 {
     padding-left: 0.4em;
 }
 
+.date {
+    color: #777;
+}
+
 hr {
     border: none;
     border-top: 2px solid #fcc;
