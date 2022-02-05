@@ -12,6 +12,8 @@ jobs:
     steps:
       - uses: actions/checkout@v2
         with:
+          # This does a full clone instead of a shallow clone, which is
+          # needed for the "last-modified" code to work.
           fetch-depth: 0
       - uses: actions-rs/toolchain@v1
         with:
