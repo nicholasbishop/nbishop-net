@@ -116,7 +116,7 @@ fn get_all_contents(conf: &Conf) -> Result<Vec<Content>> {
         // Source path relative to the content dir.
         let rel_path = source.strip_prefix(&conf.content_dir)?;
 
-        let mut output_name = rel_path.iter().collect::<Vec<_>>().join("_");
+        let mut output_name = rel_path.iter().collect::<Vec<_>>().join("-");
 
         let extension = source.extension().unwrap();
         let content_type;
