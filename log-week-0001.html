@@ -88,7 +88,10 @@ adding the ia32 target to uefi-rs.</p>
 <a href="https://github.com/rust-osdev/uefi-rs/pull/335">PR</a> to replace the
 <code>build.py</code> test runner in uefi-rs with a pure-Rust version: the exit
 code of qemu is no longer checked. Put up a
-<a href="https://github.com/rust-osdev/uefi-rs/pull/355">PR</a> to fix that.</p>
+<a href="https://github.com/rust-osdev/uefi-rs/pull/355">PR</a> to fix
+that. Discovered at that point that the old version of qemu (4.2) in
+ubuntu-20.04 would crash on exit, fixed by pulling in a PPA to upgrade
+qemu.</p>
 </li>
 </ul>
 
