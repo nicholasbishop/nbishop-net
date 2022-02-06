@@ -71,6 +71,16 @@ hopefully that API will be improved at some point.</p>
 <p>Put up a uefi-rs <a href="https://github.com/rust-osdev/uefi-rs/pull/353">PR</a>
 to add VM tests for Aarch64.</p>
 </li>
+<li>
+<p>Looking into adding support for 32-bit x86 UEFI to uefi-rs. The
+existing code seems to work fine, so just a matter of updating the
+xtask code to understand the <code>ia32</code> target and add it to the CI. The
+version of Ubuntu used on the github runner doesn't yet have an ia32
+OVMF package, but there are some unofficial nightlies here:
+https://github.com/retrage/edk2-nightly. Put up a quick
+<a href="https://github.com/retrage/edk2-nightly/pull/3">PR</a> to fix broken
+ia32 links in that project's readme.</p>
+</li>
 </ul>
 
     </div>
