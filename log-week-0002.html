@@ -42,6 +42,11 @@ cleanup. There's also quite a bit of discussion about improvements to
 <p>I realized <code>CStr16::as_string</code> isn't needed since <code>to_string</code> is
 already automatically implemented, put up a
 <a href="https://github.com/rust-osdev/uefi-rs/pull/357">PR</a> to remove it.</p>
+<p>Now looking at removing some of the implicit conversions in the file
+system code. I've half convinced myself there's a bug in some unsafe
+code in <code>NamedFileProtocolInfo</code>, will have to check that more
+carefully. I might start by adding some more tests for the file code,
+since it looks like a lot of it isn't yet covered by uefi-test-runner.</p>
 </li>
 </ul>
 
