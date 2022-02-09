@@ -35,6 +35,9 @@ conversion in uefi-rs. Some of the suggested changes have been made,
 but there's probably room for more conversion utilities and code
 cleanup. There's also quite a bit of discussion about improvements to
 <code>Write</code>ing UCS-2 strings, but I'm not clear on how necessary that is.</p>
+<p>I realized <code>CStr16::as_string</code> isn't needed since <code>to_string</code> is
+already automatically implemented, put up a
+<a href="https://github.com/rust-osdev/uefi-rs/pull/357">PR</a> to remove it.</p>
 </li>
 </ul>
 
