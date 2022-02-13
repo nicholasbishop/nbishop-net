@@ -17,7 +17,7 @@
 
     <a class="content" href="index.html">« Home</a>
     <!-- Little hack: only show date if not on the home page -->
-    <p class="content date">Created 2022-02-07, last updated 2022-02-12</p>
+    <p class="content date">Created 2022-02-07, last updated 2022-02-13</p>
     <div class="content">
       <ul>
 <li>
@@ -51,8 +51,30 @@ since it looks like a lot of it isn't yet covered by uefi-test-runner.</p>
 <li>
 <p>Took a little time to send messages to my senators about the EARN IT
 Act, wherein they are once again trying to let law enforcement spy on
-any ol' thing without even a pretense of oversight. More info at the
+any ol' thing without even a pretense of proper oversight. More info
+at the
 <a href="https://act.eff.org/action/stop-the-earn-it-act-to-save-our-privacy">EFF</a>.</p>
+</li>
+<li>
+<p>Spent a while trying to figure out how to convert from HTML to PDF. I
+didn't end up finding a good option. There are plenty of tools that
+can do the basics of conversion: pandoc (with various &quot;engines&quot;),
+<a href="https://www.princexml.com">Prince</a>, wkhtmltopdf, chrome (with
+<code>--headless --print-to-pdf-no-header --print-to-pdf</code>), weasyprint, but
+all of these produce somewhat ugly output that doesn't match what the
+HTML looks like in the browser. Firefox's print-to-pdf actually
+produces very nice output, but as far as I can tell there's no way to
+turn off the headers and footers, and there's no way to generate a pdf
+from the command line
+[<a href="https://bugzilla.mozilla.org/show_bug.cgi?id=1407238">bug</a>].</p>
+<p>So, for now maybe the best way to generate a PDF is still LaTex, which
+I really did not expect to be the case. Fortunately it's a lot easier
+to work with LaTex than it used to be thanks to the amazing
+<a href="https://github.com/tectonic-typesetting/tectonic">tectonic</a> project,
+but I really wish I could use HTML for this.</p>
+<p>I guess the real problem is that the format we really want doesn't
+exist: we want the locked formatting and single-file features of PDF,
+but without the incredible complexity of the PDF spec.</p>
 </li>
 </ul>
 
