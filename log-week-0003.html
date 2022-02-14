@@ -37,6 +37,20 @@ in Linux for the iMac12,1 backlight. It's only a couple lines of diff,
 but it feels nice to fix up some old (but not <em>that</em> old) hardware to
 benefit anyone still using it.</p>
 </li>
+<li>
+<p>Experimenting with some kind of consistent buffer API in uefi-rs. A
+consistent pattern that comes up a lot is that UEFI has a function to
+read data into a buffer (often, but not always, a <code>u8</code> slice), and if
+the buffer is not big enough it will return <code>BUFFER_TOO_SMALL</code>. In
+some cases we have manually wrapped such functions to provide a more
+convenient API that uses a <code>Vec</code> as the buffer so that we can resize
+it as needed until it's big enough. Since allocation is optional in
+uefi-rs, the latter interface is hidden behind the <code>exts</code> feature.</p>
+<p>It would be nice if we had a way to do all that without the manual
+boilerplate. I'm experimenting with having a <code>Buffer</code> trait that can
+be backed by either an array or a <code>Vec</code>, and seeing how far I can get
+with that.</p>
+</li>
 </ul>
 
     </div>
