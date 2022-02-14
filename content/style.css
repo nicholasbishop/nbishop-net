@@ -68,8 +68,13 @@ pre {
 }
 
 ol {
-    /* Cut the padding in half to make the list not be indented. */
+    /* Shrink the padding to make the bullets not be indented. */
     padding-left: 20px;
+}
+
+ul {
+    /* Shrink the padding to make the bullets not be indented. */
+    padding-left: 14px;
 }
 
 @media (max-width : 60em) {
