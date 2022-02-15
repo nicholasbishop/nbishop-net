@@ -17,7 +17,7 @@
 
     <a class="content" href="index.html">« Home</a>
     <!-- Little hack: only show date if not on the home page -->
-    <p class="content date">Created 2022-02-14, last updated 2022-02-14</p>
+    <p class="content date">Created 2022-02-14, last updated 2022-02-15</p>
     <div class="content">
       <ul>
 <li>
@@ -50,6 +50,12 @@ uefi-rs, the latter interface is hidden behind the <code>exts</code> feature.</p
 boilerplate. I'm experimenting with having a <code>Buffer</code> trait that can
 be backed by either an array or a <code>Vec</code>, and seeing how far I can get
 with that.</p>
+</li>
+<li>
+<p>One area of uefi-rs that has consistently tripped me up is
+<code>uefi::Result</code>, which tries to cleanly separate errors from warnings
+(UEFI packs both of these into the <code>EFI_STATUS</code> enum.) I'm going to
+write up a proposal to simplify this type and see what people think.</p>
 </li>
 </ul>
 
