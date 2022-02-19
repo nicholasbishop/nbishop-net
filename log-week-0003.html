@@ -17,7 +17,7 @@
 
     <a class="content" href="index.html">« Home</a>
     <!-- Little hack: only show date if not on the home page -->
-    <p class="content date">Created 2022-02-14, last updated 2022-02-18</p>
+    <p class="content date">Created 2022-02-14, last updated 2022-02-19</p>
     <div class="content">
       <ul>
 <li>
@@ -85,6 +85,17 @@ uefi-rs, but rather a separate complementary crate. Could be wrong though.</p>
 <p>Put up a uefi-rs <a href="https://github.com/rust-osdev/uefi-rs/pull/363">PR</a>
 to remove some implicit string conversion. Also increased the test
 coverage a little bit.</p>
+</li>
+<li>
+<p>Did some initial investigation into what it would take to get code
+coverage information out of <code>uefi-test-runner</code>. As the project gets
+bigger it would be helpful to have a better handle on what all is
+actually tested (or not).
+<a href="https://github.com/Amanieu/minicov">minicov</a> looks promising, but I
+immediately ran into a rustc
+<a href="https://github.com/rust-lang/rust/issues/93848">bug</a>. Hopefully the
+associated <a href="https://github.com/rust-lang/rust/pull/93870">PR</a> will be
+merged soon and I'll give it another try then.</p>
 </li>
 </ul>
 
