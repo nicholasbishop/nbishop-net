@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="x-ua-compatible" content="ie=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Week 0004</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="icon" href="favicon.png" />
+
+    <script defer data-domain="nbishop.net" src="https://plausible.io/js/plausible.js"></script>
+  </head>
+
+  <body>
+    <h1>Week 0004</h1>
+
+    <a class="content" href="index.html">« Home</a>
+    <!-- Little hack: only show date if not on the home page -->
+    <p class="content date">Created 2022-02-21, last updated 2022-02-22</p>
+    <div class="content">
+      <ul>
+<li>
+<p>Quick <a href="https://github.com/rust-osdev/uefi-rs/pull/364">PR</a> to make
+running tests easier in uefi-rs.</p>
+</li>
+<li>
+<p>Getting back to looking at the file info code in uefi-rs, I did find
+some bugs and things to improve. There were too many things to do it
+all in one PR, so I've started out with a
+<a href="https://github.com/rust-osdev/uefi-rs/pull/365">PR</a> containing one
+fix that adds unit tests. Once that's merged I'll follow up with more
+cleanups and improvements.</p>
+</li>
+<li>
+<p><a href="https://github.com/rust-osdev/uefi-rs/pull/366">PR</a> to add more
+string equality impls for <code>CStr16</code> and <code>CString16</code>.</p>
+</li>
+</ul>
+
+    </div>
+
+    <hr />
+
+    <div class="content">
+      © 2022 <a href="mailto:nbishop@nbishop.net">Nicholas Bishop</a>
+      •
+      <a href="index.html">Home</a>
+      •
+      <a href="https://github.com/nicholasbishop/nbishop-net">Repo</a>
+
+      <!-- License -->
+      <div id="license">
+        Unless otherwise noted, content is licensed under
+        <a href="https://creativecommons.org/licenses/by/4.0">CC BY 4.0</a>.
+        Code blocks are <em>additionally</em> available under
+        <a href="https://creativecommons.org/share-your-work/public-domain/cc0">CC0</a> and
+        <a href="https://www.apache.org/licenses/LICENSE-2.0.txt">Apache License version 2.0</a>
+        at your option.
+      </div>
+    </div>
+  </body>
+</html>
