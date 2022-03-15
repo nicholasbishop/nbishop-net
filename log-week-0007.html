@@ -5,7 +5,7 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Week 0006</title>
+    <title>Week 0007</title>
     <link rel="stylesheet" href="style.css" />
     <link rel="icon" href="favicon.png" />
 
@@ -13,31 +13,20 @@
   </head>
 
   <body>
-    <h1>Week 0006</h1>
+    <h1>Week 0007</h1>
 
     <a class="content" href="index.html">« Home</a>
     <!-- Little hack: only show date if not on the home page -->
-    <p class="content date">Created 2022-03-07, last updated 2022-03-15</p>
+    <p class="content date">Created 2022-03-14, last updated 2022-03-15</p>
     <div class="content">
       <h2>uefi-rs</h2>
 <ul>
 <li>
-<p>Doing some <a href="https://github.com/rust-osdev/uefi-rs/pull/386">PR</a>
-review, there's a mysterious failuring on the aarch64 VM.</p>
-<p>Turned out it was just a bad pointer. Suprising that it only failed on
-aarch64!</p>
-</li>
-<li>
-<p><a href="https://github.com/rust-osdev/uefi-rs/pull/388">PR</a> to add bitflag
-semantics to GPT partition attributes.</p>
-</li>
-<li>
-<p>We've merged the <a href="https://github.com/rust-osdev/uefi-rs/pull/361">PR</a>
-that implements the
-<a href="https://github.com/rust-osdev/uefi-rs/issues/360">uefi::Result simplification RFC</a>.</p>
-<p>I'm pretty pleased with that cleanup, I think it will make things
-significantly simpler for users of the library, and even improve
-correctness in some cases.</p>
+<p>Realized that I missing something very important in the
+<a href="https://github.com/rust-osdev/uefi-rs/pull/361"><code>uefi::Result</code> simplification PR</a>:
+warning statuses were incorrectly being treated as success instead of error.</p>
+<p>Put up a <a href="https://github.com/rust-osdev/uefi-rs/pull/389">PR</a> to fix
+that and add a unit test to ensure the correctness.</p>
 </li>
 </ul>
 
