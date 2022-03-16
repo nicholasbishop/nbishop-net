@@ -17,7 +17,7 @@
 
     <a class="content" href="index.html">« Home</a>
     <!-- Little hack: only show date if not on the home page -->
-    <p class="content date">Created 2022-03-14, last updated 2022-03-15</p>
+    <p class="content date">Created 2022-03-14, last updated 2022-03-16</p>
     <div class="content">
       <h2>uefi-rs</h2>
 <ul>
@@ -27,6 +27,13 @@
 warning statuses were incorrectly being treated as success instead of error.</p>
 <p>Put up a <a href="https://github.com/rust-osdev/uefi-rs/pull/389">PR</a> to fix
 that and add a unit test to ensure the correctness.</p>
+</li>
+<li>
+<p><a href="https://github.com/rust-osdev/uefi-rs/pull/392">PR</a> to add a lot more
+file system testing. This builds a disk image entirely using Rust
+libraries (fatfs and mbrman), which I didn't previously know we could
+do. A nice alternative compared to invoking a bunch of command-line
+tools.</p>
 </li>
 </ul>
 
