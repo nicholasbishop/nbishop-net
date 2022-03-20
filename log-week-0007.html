@@ -17,7 +17,7 @@
 
     <a class="content" href="index.html">« Home</a>
     <!-- Little hack: only show date if not on the home page -->
-    <p class="content date">Created 2022-03-14, last updated 2022-03-19</p>
+    <p class="content date">Created 2022-03-14, last updated 2022-03-20</p>
     <div class="content">
       <h2>uefi-rs</h2>
 <ul>
@@ -49,12 +49,17 @@ badges from the readme. Ironically it seems that
 </ul>
 <h2>Rust</h2>
 <ul>
-<li><a href="https://github.com/rust-lang/rust/pull/95117">PR</a> to clarify what you
+<li>
+<p><a href="https://github.com/rust-lang/rust/pull/95117">PR</a> to clarify what you
 can't do with the <code>addr_of</code>/<code>addr_of_mut</code> macros. I had previously
 opened an <a href="https://github.com/rust-lang/rust/issues/94473">issue</a>
 expressing my confusion, it was pointed out that I didn't understand
 the UB rules correctly. Hopefully my PR can help the next person who
-is confused…</li>
+is confused…</p>
+<p>Update: some hours later I have just read this neat blog post about
+pointers in Rust: <a href="https://gankra.github.io/blah/fix-rust-pointers">https://gankra.github.io/blah/fix-rust-pointers</a>.
+Now I am worried my PR is all wrong :D</p>
+</li>
 </ul>
 
     </div>
