@@ -85,8 +85,19 @@ fails the same way, hmm.</p>
 <p>Ok, changing my <code>config.toml</code> to the <code>library</code> profile instead of
 <code>user</code>, and then adding <code>#![feature(restricted_std)]</code> in
 <code>library/test/src/lib.rs</code> got the build step to succeed. Then I ran
-<code>./x.py install</code> to install it into the custom prefix. Now... how do I
-tell my test project to compile with that <code>rustc</code>?</p>
+<code>./x.py install</code> to hopefully install it into the custom
+prefix. Unexpectedly to me, that sent it back to compiling a bunch of
+stuff instead of installing anything, and then it failed with the same
+errors as before.</p>
+<p>Ok, let's try throwing <code>#![allow(unexpected_cfgs)]</code> into
+<code>compiler_builtins</code>'s <code>lib.rs</code>. Now it's blowing up in a whole new way:</p>
+<pre style="background-color:#eff1f5;"><code>
+<span style="color:#4f5b66;">thread &#39;rustc&#39; panicked at &#39;no entry found for key&#39;, compiler/rustc_metadata/src/rmeta/decoder/cstore_impl.rs:525:9
+</span>
+</code></pre>
+<p>Hmm. Maybe it's time to take a step back and do a clean build of
+everything with a more stock config, because I have no idea what's going
+wrong. I'll switch from my laptop to my desktop for quicker builds.</p>
 
     </div>
 
