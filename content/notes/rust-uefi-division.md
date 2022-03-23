@@ -61,4 +61,13 @@ much better problem to have than not having documentation! But it's
 still probably not as easy as it could be to get started with changing
 things in Rust and I have to imagine that most people who give it a try
 will bounce off the complexity pretty quickly and give up. (I may join
-that group after failing at this for a bit, we'll see!)
+that group after failing at this for a bit, we'll see!) This is a
+challenge that every big project faces of course, so absolutely no
+judgement to the Rust folks on this, just noting there's more work to
+do here.
+
+Next, build stuff and see what breaks...
+
+```
+./x.py build
+```
