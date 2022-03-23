@@ -79,6 +79,14 @@ do here.</p>
 <span style="color:#4f5b66;">./x.py build
 </span>
 </code></pre>
+<p>Lots of errors in <code>compiler_builtins</code>. I'll try checking out the version
+that rust is currently pinned to <code>0.1.70</code> and build again. And that
+fails the same way, hmm.</p>
+<p>Ok, changing my <code>config.toml</code> to the <code>library</code> profile instead of
+<code>user</code>, and then adding <code>#![feature(restricted_std)]</code> in
+<code>library/test/src/lib.rs</code> got the build step to succeed. Then I ran
+<code>./x.py install</code> to install it into the custom prefix. Now... how do I
+tell my test project to compile with that <code>rustc</code>?</p>
 
     </div>
 
