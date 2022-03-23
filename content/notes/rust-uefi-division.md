@@ -71,3 +71,13 @@ Next, build stuff and see what breaks...
 ```
 ./x.py build
 ```
+
+Lots of errors in `compiler_builtins`. I'll try checking out the version
+that rust is currently pinned to `0.1.70` and build again. And that
+fails the same way, hmm.
+
+Ok, changing my `config.toml` to the `library` profile instead of
+`user`, and then adding `#![feature(restricted_std)]` in
+`library/test/src/lib.rs` got the build step to succeed. Then I ran
+`./x.py install` to install it into the custom prefix. Now... how do I
+tell my test project to compile with that `rustc`?
