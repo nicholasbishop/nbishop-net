@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="x-ua-compatible" content="ie=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Investigating a Rust-on-UEFI division bug</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="icon" href="favicon.png" />
+
+    <script defer data-domain="nbishop.net" src="https://plausible.io/js/plausible.js"></script>
+  </head>
+
+  <body>
+    <h1>Investigating a Rust-on-UEFI division bug</h1>
+
+    <a class="content" href="index.html">« Home</a>
+    <!-- Little hack: only show date if not on the home page -->
+    <p class="content date">Created 2022-03-22, last updated 2022-03-23</p>
+    <div class="content">
+      <p>These are some notes related to
+<a href="https://github.com/rust-lang/rust/issues/86494">https://github.com/rust-lang/rust/issues/86494</a>. I filed that bug a
+while ago but haven't followed up on it. The bug still repros so I
+thought I'd take a look and see if I can give better information about
+what's going wrong. I haven't done any work on the rust compiler itself
+before, so I'll probably just be flailing around a bit.</p>
+<p>It was suggested in the bug that the invalid instruction was maybe
+caused by SSE being used, which wouldn't normally be allowed in a UEFI
+environment. I think though that the invalid instruction is actually not
+happening in the division per se, but rather due to hitting
+<code>unreachable_unchecked</code> because it somehow thinks a division by zero is
+occurring.</p>
+<p>I suspect the problem is in <code>compiler_builtins</code>,
+although it's certainly possible that rustc or llvm is at fault.</p>
+<p>It's <a href="https://github.com/rust-lang/wg-cargo-std-aware/issues/61">not currently possible</a>
+to use a custom <code>compiler_builtins</code> in your project's <code>Cargo.toml</code> in
+combination with <code>build-std</code>. The current recommendation is to build
+rust with the necessary customizations.</p>
+<p>So, I have both <code>rust</code> and <code>compiler_builtins</code> checked out. I added this
+to <code>Cargo.toml</code> in rust:</p>
+<pre style="background-color:#eff1f5;"><code class="language-toml">
+<span style="color:#4f5b66;">[patch.crates-io]
+</span><span style="color:#4f5b66;">compiler_builtins = { path = &quot;../compiler-builtins&quot; }
+</span>
+</code></pre>
+<p>And ran <code>cargo update -p compiler_builtins</code> for good measure, not sure
+if that's needed or not.</p>
+<p>I set up <code>config.toml</code> like this, not at all sure if these are good
+settings.</p>
+<pre style="background-color:#eff1f5;"><code class="language-toml">
+<span style="color:#4f5b66;">profile = &quot;user&quot;
+</span><span style="color:#4f5b66;">changelog-seen = 2
+</span><span style="color:#4f5b66;">
+</span><span style="color:#4f5b66;">[llvm]
+</span><span style="color:#4f5b66;">download-ci-llvm = true
+</span><span style="color:#4f5b66;">
+</span><span style="color:#4f5b66;">[install]
+</span><span style="color:#4f5b66;">prefix = &quot;/var/home/nbishop/src/rust/bishinstall&quot;
+</span><span style="color:#4f5b66;">
+</span><span style="color:#4f5b66;">[build]
+</span><span style="color:#4f5b66;">target = [&quot;x86_64-unknown-uefi&quot;]
+</span>
+</code></pre>
+<p>Aside: there's a lot of documentation, both in the <code>rust</code> repo and
+linked to from it, e.g. the <a href="https://rustc-dev-guide.rust-lang.org/">Guide to Rustc
+Development</a>, but I've found it
+a bit challenging to navigate and find what I'm looking for. Certainly a
+much better problem to have than not having documentation! But it's
+still probably not as easy as it could be to get started with changing
+things in Rust and I have to imagine that most people who give it a try
+will bounce off the complexity pretty quickly and give up. (I may join
+that group after failing at this for a bit, we'll see!)</p>
+
+    </div>
+
+    <hr />
+
+    <div class="content">
+      © 2022 <a href="mailto:nbishop@nbishop.net">Nicholas Bishop</a>
+      •
+      <a href="index.html">Home</a>
+      •
+      <a href="https://github.com/nicholasbishop/nbishop-net">Repo</a>
+
+      <!-- License -->
+      <div id="license">
+        Unless otherwise noted, content is licensed under
+        <a href="https://creativecommons.org/licenses/by/4.0">CC BY 4.0</a>.
+        Code blocks are <em>additionally</em> available under
+        <a href="https://creativecommons.org/share-your-work/public-domain/cc0">CC0</a> and
+        <a href="https://www.apache.org/licenses/LICENSE-2.0.txt">Apache License version 2.0</a>
+        at your option.
+      </div>
+    </div>
+  </body>
+</html>
