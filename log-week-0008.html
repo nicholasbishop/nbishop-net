@@ -17,13 +17,38 @@
 
     <a class="content" href="index.html">« Home</a>
     <!-- Little hack: only show date if not on the home page -->
-    <p class="content date">Created 2022-03-21, last updated 2022-03-23</p>
+    <p class="content date">Created 2022-03-21, last updated 2022-03-27</p>
     <div class="content">
       <p><a href="images-2022-03-20-clouds.jpg"><img class="photo" src="images-2022-03-20-clouds-thumb.jpg" title="Photo of complicated clouds over Prospect Park in Brooklyn"></img></a></p>
 <h2>Rust</h2>
 <ul>
 <li>Started writing some <a href="notes-rust-uefi-division.html">notes</a> on
 investigating a bug in Rust with division on the x86_64 UEFI target.</li>
+</ul>
+<h2>uefi-rs</h2>
+<ul>
+<li>Back in <a href="log-week-0003.html">Week 0003</a> I started looking at a generic
+buffer interface. I paused that to work on the removal of
+<a href="https://github.com/rust-osdev/uefi-rs/issues/360"><code>uefi::Completion</code></a>,
+but now that that's done I'm resuming buffer work. Some rough goals:
+<ul>
+<li>Generic interface that can be used for all UEFI interfaces that take
+a buffer. Underlying type is some kind of contiguous slice of <code>T</code>.</li>
+<li>Avoid needing multiple wrapper methods for the same underlying UEFI
+interface. E.g. we don't want one method that takes a slice, another
+that takes a MaybeUninit slice, and another that dynamically
+allocates.</li>
+<li>Make it hard or impossible to accidentally use the wrong length of
+the buffer. Currently it's easy to pass in a slice of zeroed memory,
+get UEFI to fill in the first N elements, and then end up using the
+full original slice, which may have junk data (initialized in the
+Rust sense, but not containing real data) at the end.</li>
+<li>For the dynamic allocation case, allow capping the size to avoid
+unbounded memory usage.</li>
+<li>Make it easy to get alignment correct. This comes up for example
+with the file info types, which are DSTs.</li>
+</ul>
+</li>
 </ul>
 
     </div>
