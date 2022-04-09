@@ -85,4 +85,9 @@ ul {
     .content {
         margin: 0.5em;
     }
+
+    .photo {
+        width: 100%;
+        height: auto;
+    }
 }
