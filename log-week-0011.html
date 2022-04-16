@@ -28,6 +28,13 @@ behavior using Miri. Filed an
 <li>Put up a <a href="https://github.com/rust-osdev/uefi-rs/pull/407">PR</a> to
 partially fix that UB, by avoiding use of <code>allocate_buffer</code> in the
 file info code.</li>
+<li>Found some potential UB in the file info code with
+<code>-Zmiri-tag-raw-pointers</code>, put up a
+<a href="https://github.com/rust-osdev/uefi-rs/pull/408">PR</a> to fix it.</li>
+<li>I'd like to enable <code>-Zmiri-tag-raw-pointers</code> in our Miri tests in
+general, but it's catching some issues with <code>DevicePath</code>. This one is
+tricky because unlike most protocols, <code>DevicePath</code> is really
+unsized. But we don't currently implement it that way.</li>
 </ul>
 <h2>Rust</h2>
 <ul>
