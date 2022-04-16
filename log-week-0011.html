@@ -17,7 +17,7 @@
 
     <a class="content" href="index.html">« Home</a>
     <!-- Little hack: only show date if not on the home page -->
-    <p class="content date">Created 2022-04-11, last updated 2022-04-13</p>
+    <p class="content date">Created 2022-04-11, last updated 2022-04-16</p>
     <div class="content">
       <p><a href="images-2022-04-03-bay.jpg"><img class="photo" src="images-2022-04-03-bay-thumb.jpg" title="Photo of trees in San Francisco overlooking the bay"></img></a></p>
 <h2>uefi-rs</h2>
@@ -25,6 +25,22 @@
 <li>While working on adding some more unit tests I found some undefined
 behavior using Miri. Filed an
 <a href="https://github.com/rust-osdev/uefi-rs/issues/406">issue</a>.</li>
+<li>Put up a <a href="https://github.com/rust-osdev/uefi-rs/pull/407">PR</a> to
+partially fix that UB, by avoiding use of <code>allocate_buffer</code> in the
+file info code.</li>
+</ul>
+<h2>Rust</h2>
+<ul>
+<li>I've been using Miri more in uefi-rs to test our unsafe code, which we
+have quite a lot of. One issue I've had is that I find myself guessing
+a lot as to what Miri is trying to tell me. The error messages are
+relatively terse, and while a lot has been written about stacked
+borrows, it's not clear what the best resource to read is. As a first
+step to improving this situation I filed an
+<a href="https://github.com/rust-lang/miri/issues/2066">issue</a> in the Miri
+repo suggesting adding documentation for Miri's output to the
+readme. Even just documenting the notation used in the output would be
+a good start.</li>
 </ul>
 
     </div>
