@@ -17,7 +17,7 @@
 
     <a class="content" href="index.html">« Home</a>
     <!-- Little hack: only show date if not on the home page -->
-    <p class="content date">Created 2022-04-25, last updated 2022-04-30</p>
+    <p class="content date">Created 2022-04-25, last updated 2022-05-01</p>
     <div class="content">
       <h2>Rust</h2>
 <ul>
@@ -28,12 +28,20 @@ repo, which was very quickly fixed.</li>
 </ul>
 <h2>uefi-rs</h2>
 <ul>
-<li>After a lot of revisions, I finally finished my <a href="https://github.com/rust-osdev/uefi-rs/pull/421">rework of the
+<li>
+<p>After a lot of revisions, I finally finished my <a href="https://github.com/rust-osdev/uefi-rs/pull/421">rework of the
 <code>DevicePath</code> API</a>. The
 original motivation for this change was getting tests to pass under
 Miri with <code>-Zmiri-tag-raw-pointers</code> enabled, but also ended up with
 (IMO) a much-improved interface by separating <code>DevicePath</code> into
-several types.</li>
+several types.</p>
+</li>
+<li>
+<p>I've been experimenting with some very unfinished testing that has
+already uncovered a few minor issues, put up fixes for a couple:
+<a href="https://github.com/rust-osdev/uefi-rs/pull/422">PR</a>,
+<a href="https://github.com/rust-osdev/uefi-rs/pull/423">PR</a></p>
+</li>
 </ul>
 
     </div>
