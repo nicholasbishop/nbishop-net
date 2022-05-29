@@ -21,11 +21,22 @@
     <div class="content">
       <h2>uefi-rs</h2>
 <ul>
-<li>I noticed that we are allowing some UEFI-2.0+-only functions to be
+<li>
+<p>I noticed that we are allowing some UEFI-2.0+-only functions to be
 called without checking the table version. Put up a
 <a href="https://github.com/rust-osdev/uefi-rs/pull/436">PR</a> to fix that, and
 along the way constify some methods of <code>Revision</code> and add constants
-for all the UEFI revisions.</li>
+for all the UEFI revisions.</p>
+</li>
+<li>
+<p>A user pointed out that although compiling uefi-rs works just fine
+under Windows (including outside of WSL), using our <code>cargo xtask</code>
+tools does not work. This is due to dependencies on the <code>nix</code> crate,
+used for some VM testing operations. Put up a
+<a href="https://github.com/rust-osdev/uefi-rs/pull/438">PR</a> to add some
+conditional compilation so that xtask builds under Windows. The PR
+also adds a CI job to ensure it keeps working.</p>
+</li>
 </ul>
 
     </div>
