@@ -59,6 +59,11 @@ hr {
     border: 1px solid #ccc;
 }
 
+#rss-logo {
+    width: 1em;
+    height: 1em;
+}
+
 .photo {
     border: 1px solid #cce;
 }
