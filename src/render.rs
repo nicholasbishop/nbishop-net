@@ -321,9 +321,12 @@ fn render_markdown(state: RenderMarkdownState) -> Result<()> {
             .map(|date| date.to_string())
             .unwrap_or_else(|| "?".to_string()),
     );
+    let date_format = time::format_description::parse(
+        "[year]-[month]-[day] [hour]:[minute]:[second] UTC",
+    )?;
     ctx.insert(
         "updated_date",
-        &state.content.last_modified.date().to_string(),
+        &state.content.last_modified.format(&date_format)?,
     );
     ctx.insert("body", &markdown_html);
     let show_home_link = state.content.output_name != "index.html";
