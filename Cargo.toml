@@ -12,6 +12,7 @@ command-run = "1.1.1"
 comrak = "0.12.1"
 fs-err = "2.7.0"
 image = { version = "0.24.2", default-features = false, features = ["jpeg"] }
+rayon = "1.5.3"
 rss = "2.0.1"
 serde = { version = "1.0.137", features = ["derive"] }
 tera = "1.15.0"

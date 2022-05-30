@@ -5,6 +5,7 @@ use comrak::{ComrakOptions, ComrakPlugins, ComrakRenderOptions};
 use fs_err as fs;
 use image::imageops::{self, FilterType};
 use image::io::Reader as ImageReader;
+use rayon::prelude::*;
 use rss::ChannelBuilder;
 use serde::Serialize;
 use std::collections::HashMap;
@@ -376,6 +377,8 @@ pub fn render() -> Result<()> {
 
     generate_rss(&conf, &contents)?;
 
+    let mut thumbnail_params = Vec::new();
+
     for content in &contents {
         let output_path = conf.output_dir.join(&content.output_name);
 
@@ -397,7 +400,7 @@ pub fn render() -> Result<()> {
                 println!("copy {} -> {}", content.source, output_path);
                 fs::copy(&content.source, &output_path)?;
 
-                generate_thumbnail(content, &output_path)?;
+                thumbnail_params.push((content, output_path));
             }
             ContentType::PlainFile => {
                 println!("copy {} -> {}", content.source, output_path);
@@ -405,6 +408,12 @@ pub fn render() -> Result<()> {
             }
         }
     }
+
+    thumbnail_params
+        .par_iter()
+        .for_each(|(content, output_path)| {
+            generate_thumbnail(content, output_path).unwrap()
+        });
 
     Ok(())
 }
