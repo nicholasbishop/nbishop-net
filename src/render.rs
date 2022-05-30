@@ -9,7 +9,7 @@ use serde::Serialize;
 use std::collections::HashMap;
 use std::process::Command;
 use tera::{Context, Tera};
-use time::OffsetDateTime;
+use time::{Date, OffsetDateTime};
 use walkdir::WalkDir;
 
 #[derive(Debug)]
@@ -21,7 +21,7 @@ struct Conf {
 #[derive(Debug)]
 struct FrontMatter {
     title: String,
-    date: Option<String>,
+    date: Option<Date>,
 }
 
 #[derive(Debug)]
@@ -81,9 +81,15 @@ fn get_markdown_content(source: &Utf8Path) -> Result<MarkdownContent> {
             front_matter.insert(parts[0].trim(), parts[1].trim());
         }
     }
+
+    let date_format = time::format_description::parse("[year]-[month]-[day]")?;
+    let date = front_matter
+        .get("date")
+        .map(|date| Date::parse(date, &date_format).unwrap());
+
     let front_matter = FrontMatter {
         title: front_matter["title"].to_owned(),
-        date: front_matter.get("date").map(|s| s.to_owned().to_owned()),
+        date,
     };
 
     Ok(MarkdownContent {
@@ -153,7 +159,7 @@ fn get_all_contents(conf: &Conf) -> Result<Vec<Content>> {
     // Sort by (date, name).
     contents.sort_unstable_by_key(|c| {
         let date = if let ContentType::Markdown(md) = &c.content_type {
-            md.front_matter.date.clone()
+            md.front_matter.date
         } else {
             None
         };
@@ -213,7 +219,7 @@ fn get_toc_list(
                 let date = md.front_matter.date.as_ref().unwrap();
                 Some(TocItem {
                     title: title.clone(),
-                    date: date.clone(),
+                    date: date.to_string(),
                     target: c.output_name.clone(),
                 })
             } else {
@@ -267,8 +273,8 @@ fn render_markdown(state: RenderMarkdownState) -> Result<()> {
             .md
             .front_matter
             .date
-            .as_ref()
-            .unwrap_or(&"?".to_string()),
+            .map(|date| date.to_string())
+            .unwrap_or_else(|| "?".to_string()),
     );
     ctx.insert(
         "updated_date",
