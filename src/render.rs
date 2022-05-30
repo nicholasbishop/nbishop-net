@@ -200,7 +200,7 @@ fn render_markdown(state: RenderMarkdownState) -> Result<()> {
     for name in dir_names {
         let placeholder = format!("$$$ dir {}\n", name);
         if markdown.contains(&placeholder) {
-            let toc = get_markdown_toc_list(&state.contents, name);
+            let toc = get_markdown_toc_list(state.contents, name);
             markdown = markdown.replace(&placeholder, &toc);
         }
     }
