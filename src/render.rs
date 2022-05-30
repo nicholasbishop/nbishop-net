@@ -5,10 +5,12 @@ use comrak::{ComrakOptions, ComrakPlugins, ComrakRenderOptions};
 use fs_err as fs;
 use image::imageops::{self, FilterType};
 use image::io::Reader as ImageReader;
+use rss::ChannelBuilder;
 use serde::Serialize;
 use std::collections::HashMap;
 use std::process::Command;
 use tera::{Context, Tera};
+use time::format_description::well_known::Rfc2822;
 use time::{Date, OffsetDateTime};
 use walkdir::WalkDir;
 
@@ -169,6 +171,49 @@ fn get_all_contents(conf: &Conf) -> Result<Vec<Content>> {
     Ok(contents)
 }
 
+fn generate_rss(conf: &Conf, contents: &[Content]) -> Result<()> {
+    let output_path = conf.output_dir.join("feed.rss");
+    println!("generating rss -> {}", output_path);
+
+    let base_url = "http://nbishop.net";
+
+    let build_date = OffsetDateTime::now_utc().format(&Rfc2822)?;
+
+    let mut builder = ChannelBuilder::default();
+    builder
+        .title("nbishop.net")
+        .link(base_url)
+        .last_build_date(build_date.clone())
+        .pub_date(build_date)
+        .description("Nicholas Bishop's personal website");
+
+    // Newest first.
+    for content in contents.iter().rev() {
+        if let ContentType::Markdown(md) = &content.content_type {
+            // Anything that doesn't have a creation date (i.e. an
+            // index) doesn't need to be in the feed.
+            if md.front_matter.date.is_none() {
+                continue;
+            }
+
+            let last_modified = content.last_modified.format(&Rfc2822)?;
+
+            let item = rss::Item {
+                title: Some(md.front_matter.title.clone()),
+                link: Some(format!("{}/{}", base_url, content.output_name)),
+                pub_date: Some(last_modified),
+                ..Default::default()
+            };
+            builder.item(item);
+        }
+    }
+    let rss = builder.build().to_string();
+
+    fs::write(output_path, rss)?;
+
+    Ok(())
+}
+
 fn scale_to_height(size: (u32, u32), target_height: u32) -> (u32, u32) {
     let (width, height) = size;
 
@@ -325,6 +370,8 @@ pub fn render() -> Result<()> {
 
     let mut markdown_tera_ctx = Context::new();
     markdown_tera_ctx.insert("toc", &toc);
+
+    generate_rss(&conf, &contents)?;
 
     for content in &contents {
         let output_path = conf.output_dir.join(&content.output_name);
