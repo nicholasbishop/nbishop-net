@@ -124,12 +124,14 @@ fn get_all_contents(conf: &Conf) -> Result<Vec<Content>> {
 
         let extension = source.extension().unwrap();
         let content_type;
-        let plain_file_extensions = ["css", "jpg", "png"];
+        let plain_file_extensions = ["css", "png"];
         if extension == "md" {
             // TODO: could be more precise with this.
             output_name = output_name.replacen(".md", ".html", 1);
 
             content_type = ContentType::Markdown(get_markdown_content(source)?);
+        } else if extension == "jpg" {
+            content_type = ContentType::Photo;
         } else if plain_file_extensions.contains(&extension) {
             content_type = ContentType::PlainFile;
         } else {
@@ -305,7 +307,9 @@ pub fn render() -> Result<()> {
                 })?;
             }
             ContentType::Photo => {
-                todo!()
+                println!("copy {} -> {}", content.source, output_path);
+                fs::copy(&content.source, &output_path)?;
+                // TODO: generate thumbnail
             }
             ContentType::PlainFile => {
                 println!("copy {} -> {}", content.source, output_path);
