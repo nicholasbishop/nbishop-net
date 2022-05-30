@@ -7,11 +7,11 @@ title: Nicholas Bishop
 
 ## Log
 
-$$$ dir log
+{{ log_toc }}
 
 ## Notes
 
-$$$ dir notes
+{{ notes_toc }}
 
 ## Projects
 

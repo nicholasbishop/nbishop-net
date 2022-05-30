@@ -186,6 +186,8 @@ struct RenderMarkdownState<'a> {
     contents: &'a [Content],
     content: &'a Content,
     md: &'a MarkdownContent,
+    log_toc: &'a str,
+    notes_toc: &'a str,
     options: &'a ComrakOptions,
     plugins: &'a ComrakPlugins<'a>,
     tera: &'a Tera,
@@ -193,21 +195,11 @@ struct RenderMarkdownState<'a> {
 }
 
 fn render_markdown(state: RenderMarkdownState) -> Result<()> {
-    let mut markdown = state.md.body.clone();
+    let markdown = state.md.body.clone();
 
-    // TODO: make more generic.
-    let dir_names = ["log", "notes"];
-    for name in dir_names {
-        let placeholder = format!("$$$ dir {}\n", name);
-        if markdown.contains(&placeholder) {
-            let toc = get_markdown_toc_list(state.contents, name);
-            markdown = markdown.replace(&placeholder, &toc);
-        }
-    }
-
-    // TODO: for now this should be a no-op.
-    let ctx = Context::new();
-    // add stuff to context
+    let mut ctx = Context::new();
+    ctx.insert("log_toc", state.log_toc);
+    ctx.insert("notes_toc", state.notes_toc);
     let autoescape = true;
     let markdown = Tera::one_off(&markdown, &ctx, autoescape)?;
 
@@ -271,6 +263,9 @@ pub fn render() -> Result<()> {
 
     let contents = get_all_contents(&conf)?;
 
+    let log_toc = get_markdown_toc_list(&contents, "log");
+    let notes_toc = get_markdown_toc_list(&contents, "notes");
+
     for content in &contents {
         let output_path = conf.output_dir.join(&content.output_name);
 
@@ -279,6 +274,8 @@ pub fn render() -> Result<()> {
 
             render_markdown(RenderMarkdownState {
                 contents: &contents,
+                log_toc: &log_toc,
+                notes_toc: &notes_toc,
                 content,
                 md,
                 options: &options,
