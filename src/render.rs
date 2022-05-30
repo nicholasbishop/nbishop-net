@@ -182,6 +182,60 @@ fn get_markdown_toc_list<P: AsRef<Utf8Path>>(
         .join("\n")
 }
 
+struct RenderMarkdownState<'a> {
+    contents: &'a [Content],
+    content: &'a Content,
+    md: &'a MarkdownContent,
+    options: &'a ComrakOptions,
+    plugins: &'a ComrakPlugins<'a>,
+    tera: &'a Tera,
+    output_path: &'a Utf8Path,
+}
+
+fn render_markdown(state: RenderMarkdownState) -> Result<()> {
+    let mut markdown = state.md.body.clone();
+
+    // TODO: make more generic.
+    let dir_names = ["log", "notes"];
+    for name in dir_names {
+        let placeholder = format!("$$$ dir {}\n", name);
+        if markdown.contains(&placeholder) {
+            let toc = get_markdown_toc_list(&state.contents, name);
+            markdown = markdown.replace(&placeholder, &toc);
+        }
+    }
+
+    let show_home_link = state.content.output_name != "index.html";
+    let markdown_html = comrak::markdown_to_html_with_plugins(
+        &markdown,
+        state.options,
+        state.plugins,
+    );
+
+    let mut ctx = Context::new();
+    ctx.insert("title", &state.md.front_matter.title);
+    ctx.insert(
+        "created_date",
+        &state
+            .md
+            .front_matter
+            .date
+            .as_ref()
+            .unwrap_or(&"?".to_string()),
+    );
+    ctx.insert(
+        "updated_date",
+        &state.content.last_modified.date().to_string(),
+    );
+    ctx.insert("body", &markdown_html);
+    ctx.insert("show_home_link", &show_home_link);
+    let html = state.tera.render("base.html", &ctx)?;
+
+    fs::write(&state.output_path, html)?;
+
+    Ok(())
+}
+
 pub fn render() -> Result<()> {
     let conf = Conf {
         content_dir: "content".into(),
@@ -217,38 +271,15 @@ pub fn render() -> Result<()> {
         if let ContentType::Markdown(md) = &content.content_type {
             println!("render {} -> {}", content.source, output_path);
 
-            let mut markdown = md.body.clone();
-
-            // TODO: make more generic.
-            let dir_names = ["log", "notes"];
-            for name in dir_names {
-                let placeholder = format!("$$$ dir {}\n", name);
-                if markdown.contains(&placeholder) {
-                    let toc = get_markdown_toc_list(&contents, name);
-                    markdown = markdown.replace(&placeholder, &toc);
-                }
-            }
-
-            let show_home_link = content.output_name != "index.html";
-            let markdown_html = comrak::markdown_to_html_with_plugins(
-                &markdown, &options, &plugins,
-            );
-
-            let mut ctx = Context::new();
-            ctx.insert("title", &md.front_matter.title);
-            ctx.insert(
-                "created_date",
-                &md.front_matter.date.as_ref().unwrap_or(&"?".to_string()),
-            );
-            ctx.insert(
-                "updated_date",
-                &content.last_modified.date().to_string(),
-            );
-            ctx.insert("body", &markdown_html);
-            ctx.insert("show_home_link", &show_home_link);
-            let html = tera.render("base.html", &ctx)?;
-
-            fs::write(&output_path, html)?;
+            render_markdown(RenderMarkdownState {
+                contents: &contents,
+                content,
+                md,
+                options: &options,
+                plugins: &plugins,
+                tera: &tera,
+                output_path: &output_path,
+            })?;
         } else {
             println!("copy {} -> {}", content.source, output_path);
             fs::copy(&content.source, &output_path)?;
