@@ -11,6 +11,7 @@ camino = "1.0.9"
 command-run = "1.1.1"
 comrak = "0.12.1"
 fs-err = "2.7.0"
+image = { version = "0.24.2", default-features = false, features = ["jpeg"] }
 serde = { version = "1.0.137", features = ["derive"] }
 tera = "1.15.0"
 time = "0.3.9"

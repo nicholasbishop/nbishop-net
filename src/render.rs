@@ -3,6 +3,8 @@ use camino::{Utf8Path, Utf8PathBuf};
 use comrak::plugins::syntect::SyntectAdapter;
 use comrak::{ComrakOptions, ComrakPlugins, ComrakRenderOptions};
 use fs_err as fs;
+use image::imageops::{self, FilterType};
+use image::io::Reader as ImageReader;
 use serde::Serialize;
 use std::collections::HashMap;
 use std::process::Command;
@@ -161,6 +163,35 @@ fn get_all_contents(conf: &Conf) -> Result<Vec<Content>> {
     Ok(contents)
 }
 
+fn scale_to_height(size: (u32, u32), target_height: u32) -> (u32, u32) {
+    let (width, height) = size;
+
+    let scale = (target_height as f32) / (height as f32);
+    let target_width = (width as f32) * scale;
+
+    (target_width as u32, target_height)
+}
+
+fn generate_thumbnail(content: &Content, output_path: &Utf8Path) -> Result<()> {
+    // Add "-thumb" to the output file name.
+    let output_file_name = format!(
+        "{}-thumb.{}",
+        output_path.file_stem().unwrap(),
+        output_path.extension().unwrap()
+    );
+    let output_path = output_path.with_file_name(output_file_name);
+
+    println!("thumbnail {} -> {}", content.source, output_path);
+
+    let src = ImageReader::open(&content.source)?.decode()?;
+
+    let (width, height) = scale_to_height((src.width(), src.height()), 512);
+    let thumb = imageops::resize(&src, width, height, FilterType::Lanczos3);
+    thumb.save(output_path)?;
+
+    Ok(())
+}
+
 fn get_toc_list(
     toc: &mut HashMap<&'static str, Vec<TocItem>>,
     contents: &[Content],
@@ -309,7 +340,8 @@ pub fn render() -> Result<()> {
             ContentType::Photo => {
                 println!("copy {} -> {}", content.source, output_path);
                 fs::copy(&content.source, &output_path)?;
-                // TODO: generate thumbnail
+
+                generate_thumbnail(content, &output_path)?;
             }
             ContentType::PlainFile => {
                 println!("copy {} -> {}", content.source, output_path);
@@ -319,4 +351,14 @@ pub fn render() -> Result<()> {
     }
 
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_scale() {
+        assert_eq!(scale_to_height((1024, 2048), 512), (256, 512));
+    }
 }
