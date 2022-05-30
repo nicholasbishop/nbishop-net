@@ -1,4 +1,4 @@
-use anyhow::{anyhow, bail, Result};
+use anyhow::{anyhow, bail, Context as _, Result};
 use camino::{Utf8Path, Utf8PathBuf};
 use comrak::plugins::syntect::SyntectAdapter;
 use comrak::{ComrakOptions, ComrakPlugins, ComrakRenderOptions};
@@ -111,7 +111,9 @@ fn get_last_modified(path: &Utf8Path) -> Result<OffsetDateTime> {
         bail!("failed to get date of {}: {:?}", path, output);
     }
     let s = std::str::from_utf8(&output.stdout).unwrap();
-    let seconds: i64 = s.parse().unwrap();
+    let seconds: i64 = s
+        .parse()
+        .context(format!("failed to get last-modified-time for {path}"))?;
     Ok(OffsetDateTime::from_unix_timestamp(seconds)?)
 }
 
