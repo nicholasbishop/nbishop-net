@@ -36,6 +36,9 @@ enum ContentType {
     /// Markdown content that must be rendered.
     Markdown(MarkdownContent),
 
+    /// Large photo that needs a thumbnail generated.
+    Photo,
+
     /// Regular file that can just be copied to the output.
     PlainFile,
 }
@@ -287,21 +290,27 @@ pub fn render() -> Result<()> {
     for content in &contents {
         let output_path = conf.output_dir.join(&content.output_name);
 
-        if let ContentType::Markdown(md) = &content.content_type {
-            println!("render {} -> {}", content.source, output_path);
+        match &content.content_type {
+            ContentType::Markdown(md) => {
+                println!("render {} -> {}", content.source, output_path);
 
-            render_markdown(RenderMarkdownState {
-                markdown_tera_ctx: &markdown_tera_ctx,
-                content,
-                md,
-                options: &options,
-                plugins: &plugins,
-                tera: &mut tera,
-                output_path: &output_path,
-            })?;
-        } else {
-            println!("copy {} -> {}", content.source, output_path);
-            fs::copy(&content.source, &output_path)?;
+                render_markdown(RenderMarkdownState {
+                    markdown_tera_ctx: &markdown_tera_ctx,
+                    content,
+                    md,
+                    options: &options,
+                    plugins: &plugins,
+                    tera: &mut tera,
+                    output_path: &output_path,
+                })?;
+            }
+            ContentType::Photo => {
+                todo!()
+            }
+            ContentType::PlainFile => {
+                println!("copy {} -> {}", content.source, output_path);
+                fs::copy(&content.source, &output_path)?;
+            }
         }
     }
 
