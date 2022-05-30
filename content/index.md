@@ -1,8 +1,6 @@
 +++
 title: Nicholas Bishop
 +++
-{% import "macros.md" as macros %}
-
 * Contact: [nbishop@nbishop.net](mailto:nbishop@nbishop.net)
 * Github: [https://github.com/nicholasbishop](https://github.com/nicholasbishop)
 

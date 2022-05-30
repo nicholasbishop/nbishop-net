@@ -206,9 +206,13 @@ struct RenderMarkdownState<'a> {
 }
 
 fn render_markdown(state: RenderMarkdownState) -> Result<()> {
+    let markdown = format!(
+        "{}\n{}",
+        "{% import \"macros.md\" as macros %}", state.md.body
+    );
     state
         .tera
-        .add_raw_template(&state.content.output_name, &state.md.body)?;
+        .add_raw_template(&state.content.output_name, &markdown)?;
     let markdown = state
         .tera
         .render(&state.content.output_name, state.markdown_tera_ctx)?;
