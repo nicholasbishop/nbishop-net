@@ -205,7 +205,12 @@ fn render_markdown(state: RenderMarkdownState) -> Result<()> {
         }
     }
 
-    let show_home_link = state.content.output_name != "index.html";
+    // TODO: for now this should be a no-op.
+    let ctx = Context::new();
+    // add stuff to context
+    let autoescape = true;
+    let markdown = Tera::one_off(&markdown, &ctx, autoescape)?;
+
     let markdown_html = comrak::markdown_to_html_with_plugins(
         &markdown,
         state.options,
@@ -228,6 +233,7 @@ fn render_markdown(state: RenderMarkdownState) -> Result<()> {
         &state.content.last_modified.date().to_string(),
     );
     ctx.insert("body", &markdown_html);
+    let show_home_link = state.content.output_name != "index.html";
     ctx.insert("show_home_link", &show_home_link);
     let html = state.tera.render("base.html", &ctx)?;
 
