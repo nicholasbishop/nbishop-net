@@ -1,17 +1,18 @@
 +++
 title: Nicholas Bishop
 +++
+{% import "macros.md" as macros %}
 
 * Contact: [nbishop@nbishop.net](mailto:nbishop@nbishop.net)
 * Github: [https://github.com/nicholasbishop](https://github.com/nicholasbishop)
 
 ## Log
 
-{{ log_toc }}
+{{ macros::toc(contents=toc["log"]) }}
 
 ## Notes
 
-{{ notes_toc }}
+{{ macros::toc(contents=toc["notes"]) }}
 
 ## Projects
 

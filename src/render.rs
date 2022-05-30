@@ -3,6 +3,7 @@ use camino::{Utf8Path, Utf8PathBuf};
 use comrak::plugins::syntect::SyntectAdapter;
 use comrak::{ComrakOptions, ComrakPlugins, ComrakRenderOptions};
 use fs_err as fs;
+use serde::Serialize;
 use std::collections::HashMap;
 use std::process::Command;
 use tera::{Context, Tera};
@@ -155,11 +156,12 @@ fn get_all_contents(conf: &Conf) -> Result<Vec<Content>> {
     Ok(contents)
 }
 
-fn get_markdown_toc_list<P: AsRef<Utf8Path>>(
+fn get_toc_list(
+    toc: &mut HashMap<&'static str, Vec<TocItem>>,
     contents: &[Content],
-    subdir: P,
-) -> String {
-    contents
+    subdir: &'static str,
+) {
+    let items = contents
         .iter()
         // Reverse iteration so that newer entries come first.
         .rev()
@@ -170,38 +172,46 @@ fn get_markdown_toc_list<P: AsRef<Utf8Path>>(
                 return None;
             };
 
-            if c.subdir == subdir.as_ref() {
+            if c.subdir == subdir {
                 let title = &md.front_matter.title;
-                let date = &md.front_matter.date.as_ref().unwrap();
-                Some(format!("* {} - [{}]({})", date, title, c.output_name))
+                let date = md.front_matter.date.as_ref().unwrap();
+                Some(TocItem {
+                    title: title.clone(),
+                    date: date.clone(),
+                    target: c.output_name.clone(),
+                })
             } else {
                 None
             }
         })
-        .collect::<Vec<_>>()
-        .join("\n")
+        .collect::<Vec<_>>();
+    toc.insert(subdir, items);
+}
+
+#[derive(Serialize)]
+struct TocItem {
+    date: String,
+    title: String,
+    target: String,
 }
 
 struct RenderMarkdownState<'a> {
-    contents: &'a [Content],
     content: &'a Content,
+    markdown_tera_ctx: &'a Context,
     md: &'a MarkdownContent,
-    log_toc: &'a str,
-    notes_toc: &'a str,
     options: &'a ComrakOptions,
     plugins: &'a ComrakPlugins<'a>,
-    tera: &'a Tera,
+    tera: &'a mut Tera,
     output_path: &'a Utf8Path,
 }
 
 fn render_markdown(state: RenderMarkdownState) -> Result<()> {
-    let markdown = state.md.body.clone();
-
-    let mut ctx = Context::new();
-    ctx.insert("log_toc", state.log_toc);
-    ctx.insert("notes_toc", state.notes_toc);
-    let autoescape = true;
-    let markdown = Tera::one_off(&markdown, &ctx, autoescape)?;
+    state
+        .tera
+        .add_raw_template(&state.content.output_name, &state.md.body)?;
+    let markdown = state
+        .tera
+        .render(&state.content.output_name, state.markdown_tera_ctx)?;
 
     let markdown_html = comrak::markdown_to_html_with_plugins(
         &markdown,
@@ -259,12 +269,16 @@ pub fn render() -> Result<()> {
     plugins.render.codefence_syntax_highlighter = Some(&adapter);
 
     // Load templates.
-    let tera = Tera::new("templates/**/*.html")?;
+    let mut tera = Tera::new("templates/*")?;
 
     let contents = get_all_contents(&conf)?;
 
-    let log_toc = get_markdown_toc_list(&contents, "log");
-    let notes_toc = get_markdown_toc_list(&contents, "notes");
+    let mut toc = HashMap::new();
+    get_toc_list(&mut toc, &contents, "log");
+    get_toc_list(&mut toc, &contents, "notes");
+
+    let mut markdown_tera_ctx = Context::new();
+    markdown_tera_ctx.insert("toc", &toc);
 
     for content in &contents {
         let output_path = conf.output_dir.join(&content.output_name);
@@ -273,14 +287,12 @@ pub fn render() -> Result<()> {
             println!("render {} -> {}", content.source, output_path);
 
             render_markdown(RenderMarkdownState {
-                contents: &contents,
-                log_toc: &log_toc,
-                notes_toc: &notes_toc,
+                markdown_tera_ctx: &markdown_tera_ctx,
                 content,
                 md,
                 options: &options,
                 plugins: &plugins,
-                tera: &tera,
+                tera: &mut tera,
                 output_path: &output_path,
             })?;
         } else {
