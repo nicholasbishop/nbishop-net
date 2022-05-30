@@ -3,7 +3,7 @@ title: Nicholas Bishop
 +++
 * Contact: [nbishop@nbishop.net](mailto:nbishop@nbishop.net)
 * Github: [https://github.com/nicholasbishop](https://github.com/nicholasbishop)
-* [<img id="rss-logo" src="rss.svg" title="RSS logo"></img> RSS feed](feed.rss)
+* [<img id="rss-logo" src="rss.svg" title="RSS logo" width=16 height=16></img> RSS feed](feed.rss)
 
 ## Log
 
