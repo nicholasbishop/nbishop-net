@@ -134,7 +134,7 @@ fn get_all_contents(conf: &Conf) -> Result<Vec<Content>> {
 
         let extension = source.extension().unwrap();
         let content_type;
-        let plain_file_extensions = ["css", "png"];
+        let plain_file_extensions = ["css", "png", "svg"];
         if extension == "md" {
             // TODO: could be more precise with this.
             output_name = output_name.replacen(".md", ".html", 1);
