@@ -24,6 +24,6 @@ jobs:
       - uses: actions-rs/cargo@v1
         with:
           command: run
-          args: -- --publish
+          args: --release -- --publish
         env:
           GH_TOKEN: ${{ secrets.TOKEN }}
