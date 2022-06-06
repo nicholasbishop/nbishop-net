@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="x-ua-compatible" content="ie=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Week 0017</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="icon" href="favicon.png" />
+
+    <script defer data-domain="nbishop.net" src="https://plausible.io/js/plausible.js"></script>
+  </head>
+
+  <body>
+    <h1>Week 0017</h1>
+
+    <a class="content" href="index.html">« Home</a>
+    <!-- Little hack: only show date if not on the home page -->
+    <p class="content date">Created 2022-06-06, last updated 2022-06-06 21:57:47 UTC</p>
+    <div class="content">
+      <p><a href="images-2022-06-06-mckeldin.jpg"><img class="photo" src="images-2022-06-06-mckeldin-thumb.jpg" title="Photo of McKeldin Mall at the University of Maryland"></img></a></p>
+<h2>gpt-disk-rs</h2>
+<ul>
+<li>
+<p>I've been working recently on some crates for working with GPT disks,
+and today I finished the process of getting them open sourced:
+<a href="https://github.com/google/gpt-disk-rs">https://github.com/google/gpt-disk-rs</a></p>
+<p>The <code>gpt_disk_types</code> crate provides all the basic types that are
+defined by the GPT portion of the UEFI specification (GPT header,
+partition entries, protective MBR, etc.) The <code>gpt_disk_io</code> crate
+extends that with an abstract interface for reading and writing to a
+block device, along with a few concrete implementations for working
+with slices and files.</p>
+</li>
+</ul>
+
+    </div>
+
+    <hr />
+
+    <div class="content">
+      © 2022 <a href="mailto:nbishop@nbishop.net">Nicholas Bishop</a>
+      •
+      <a href="index.html">Home</a>
+      •
+      <a href="https://github.com/nicholasbishop/nbishop-net">Repo</a>
+
+      <!-- License -->
+      <div id="license">
+        Unless otherwise noted, content is licensed under
+        <a href="https://creativecommons.org/licenses/by/4.0">CC BY 4.0</a>.
+        Code blocks are <em>additionally</em> available under
+        <a href="https://creativecommons.org/share-your-work/public-domain/cc0">CC0</a> and
+        <a href="https://www.apache.org/licenses/LICENSE-2.0.txt">Apache License version 2.0</a>
+        at your option.
+      </div>
+    </div>
+  </body>
+</html>
