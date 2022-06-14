@@ -17,9 +17,17 @@
 
     <a class="content" href="index.html">« Home</a>
     <!-- Little hack: only show date if not on the home page -->
-    <p class="content date">Created 2022-06-14, last updated 2022-06-14 21:27:43 UTC</p>
+    <p class="content date">Created 2022-06-14, last updated 2022-06-14 23:34:34 UTC</p>
     <div class="content">
       <p><a href="images-2022-06-11-park.jpg"><img class="photo" src="images-2022-06-11-park-thumb.jpg" title="Photo of sunlit trees beneath a sky with small fluffy clouds"></img></a></p>
+<h2>gpt-disk-rs</h2>
+<ul>
+<li>Split the <code>Guid</code> type out of <code>gpt_disk_types</code> and into its own crate:
+<a href="https://crates.io/crates/uguid"><code>uguid</code></a>. The existing GUID crates
+don't quite do the same thing, and since the <code>Guid</code> type is pretty
+broadly useful (UEFI, GPT, Microsoft Windows) I think it's good to
+have it in its own crate so it can easily be reused.</li>
+</ul>
 <h2>uefi-rs</h2>
 <ul>
 <li>
