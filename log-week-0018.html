@@ -17,16 +17,24 @@
 
     <a class="content" href="index.html">« Home</a>
     <!-- Little hack: only show date if not on the home page -->
-    <p class="content date">Created 2022-06-14, last updated 2022-06-14 23:34:34 UTC</p>
+    <p class="content date">Created 2022-06-14, last updated 2022-06-19 17:26:59 UTC</p>
     <div class="content">
       <p><a href="images-2022-06-11-park.jpg"><img class="photo" src="images-2022-06-11-park-thumb.jpg" title="Photo of sunlit trees beneath a sky with small fluffy clouds"></img></a></p>
 <h2>gpt-disk-rs</h2>
 <ul>
-<li>Split the <code>Guid</code> type out of <code>gpt_disk_types</code> and into its own crate:
+<li>
+<p>Split the <code>Guid</code> type out of <code>gpt_disk_types</code> and into its own crate:
 <a href="https://crates.io/crates/uguid"><code>uguid</code></a>. The existing GUID crates
 don't quite do the same thing, and since the <code>Guid</code> type is pretty
 broadly useful (UEFI, GPT, Microsoft Windows) I think it's good to
-have it in its own crate so it can easily be reused.</li>
+have it in its own crate so it can easily be reused.</p>
+</li>
+<li>
+<p>Released a version 0.6.0 of <code>uguid</code> that adds a const
+<code>Guid::to_ascii_hex_lower</code> method and an optional <code>serde</code> feature for
+serializing and deserializing stringified <code>Guids</code>.
+<a href="https://github.com/google/gpt-disk-rs/blob/main/uguid/CHANGELOG.md#060">Changelog</a></p>
+</li>
 </ul>
 <h2>uefi-rs</h2>
 <ul>
