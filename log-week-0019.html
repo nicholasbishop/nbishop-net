@@ -17,12 +17,20 @@
 
     <a class="content" href="index.html">« Home</a>
     <!-- Little hack: only show date if not on the home page -->
-    <p class="content date">Created 2022-06-20, last updated 2022-06-22 22:58:35 UTC</p>
+    <p class="content date">Created 2022-06-20, last updated 2022-06-23 01:53:16 UTC</p>
     <div class="content">
       <h2>gpt-disk-rs</h2>
 <ul>
 <li>Released some more minor improvements to <code>uguid</code>.
 <a href="https://github.com/google/gpt-disk-rs/blob/main/uguid/CHANGELOG.md#070">0.7.0 Changelog</a></li>
+</ul>
+<h2>uefi-rs</h2>
+<ul>
+<li>Fixed an incorrect pointer parameter in the Rng
+protocol. <a href="https://github.com/rust-osdev/uefi-rs/pull/447">PR</a>. This
+was reported in https://github.com/rust-osdev/uefi-rs/issues/446, and
+interestingly it only crashes when compiling in release mode. Not sure
+why that is.</li>
 </ul>
 
     </div>
