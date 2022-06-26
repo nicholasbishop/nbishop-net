@@ -17,20 +17,33 @@
 
     <a class="content" href="index.html">« Home</a>
     <!-- Little hack: only show date if not on the home page -->
-    <p class="content date">Created 2022-06-20, last updated 2022-06-23 01:53:16 UTC</p>
+    <p class="content date">Created 2022-06-20, last updated 2022-06-26 15:29:44 UTC</p>
     <div class="content">
       <h2>gpt-disk-rs</h2>
 <ul>
-<li>Released some more minor improvements to <code>uguid</code>.
-<a href="https://github.com/google/gpt-disk-rs/blob/main/uguid/CHANGELOG.md#070">0.7.0 Changelog</a></li>
+<li>
+<p>Released some more minor improvements to <code>uguid</code>.
+<a href="https://github.com/google/gpt-disk-rs/blob/main/uguid/CHANGELOG.md#070">0.7.0 Changelog</a></p>
+</li>
+<li>
+<p>Improved the <code>Error</code> type in <code>uguid</code>. That was the last API change I
+wanted to make, so released <code>uguid</code>
+<a href="https://github.com/google/gpt-disk-rs/blob/main/uguid/CHANGELOG.md#100">1.0.0</a>.</p>
+</li>
 </ul>
 <h2>uefi-rs</h2>
 <ul>
-<li>Fixed an incorrect pointer parameter in the Rng
+<li>
+<p>Fixed an incorrect pointer parameter in the Rng
 protocol. <a href="https://github.com/rust-osdev/uefi-rs/pull/447">PR</a>. This
 was reported in https://github.com/rust-osdev/uefi-rs/issues/446, and
 interestingly it only crashes when compiling in release mode. Not sure
-why that is.</li>
+why that is.</p>
+</li>
+<li>
+<p>Cleaned up some unused code related to <code>ucs2</code>
+Errors. <a href="https://github.com/rust-osdev/uefi-rs/pull/450">PR</a></p>
+</li>
 </ul>
 
     </div>
