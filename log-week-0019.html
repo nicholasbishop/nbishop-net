@@ -17,7 +17,7 @@
 
     <a class="content" href="index.html">« Home</a>
     <!-- Little hack: only show date if not on the home page -->
-    <p class="content date">Created 2022-06-20, last updated 2022-06-26 20:24:38 UTC</p>
+    <p class="content date">Created 2022-06-20, last updated 2022-06-26 20:56:38 UTC</p>
     <div class="content">
       <h2>gpt-disk-rs</h2>
 <ul>
@@ -46,6 +46,13 @@ why that is.</p>
 use of the <code>eh_personality</code> lang item
 (<a href="https://github.com/rust-osdev/uefi-rs/pull/451">PR</a>) as it doesn't
 seem to be needed anymore.</p>
+</li>
+<li>
+<p>Simplified the <code>uefi-services</code> panic handler a bit. Turns out that
+<code>PanicInfo</code> implements <code>Display</code>, which makes it easier for us to
+match the standard panic output of a normal std target, and also
+allows the use of an unstable feature to be removed.
+<a href="https://github.com/rust-osdev/uefi-rs/pull/453">https://github.com/rust-osdev/uefi-rs/pull/453</a></p>
 </li>
 <li>
 <p>Spent a while investigating all of the unstable features we currently
