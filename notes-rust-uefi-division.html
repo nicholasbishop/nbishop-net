@@ -17,7 +17,7 @@
 
     <a class="content" href="index.html">« Home</a>
     <!-- Little hack: only show date if not on the home page -->
-    <p class="content date">Created 2022-03-22, last updated 2022-07-09 21:52:26 UTC</p>
+    <p class="content date">Created 2022-03-22, last updated 2022-07-09 22:15:34 UTC</p>
     <div class="content">
       <h2>2022-03-22</h2>
 <p>These are some notes related to
@@ -219,6 +219,9 @@ errors. Let's try this:</p>
 <p>With that fixed, the build works.</p>
 <p><code>compiler_builtins</code> commit: 3872a7c38c64279374b46bed5c8dec45e0a5b4fd</p>
 <p>So in theory, I can now make changes in compiler_builtins to try and fix the bug.</p>
+<p>Unfortunately, any change to <code>compiler_builtins</code> triggers a huge rebuild
+starting from <code>stage0 compiler artifacts</code>, so maybe this isn't a useful
+method for fixing the problem.</p>
 
     </div>
 
