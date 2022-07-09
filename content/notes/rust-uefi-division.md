@@ -3,6 +3,8 @@ title: Investigating a Rust-on-UEFI division bug
 date: 2022-03-22
 +++
 
+## 2022-03-22
+
 These are some notes related to
 <https://github.com/rust-lang/rust/issues/86494>. I filed that bug a
 while ago but haven't followed up on it. The bug still repros so I
@@ -94,3 +96,138 @@ thread 'rustc' panicked at 'no entry found for key', compiler/rustc_metadata/src
 Hmm. Maybe it's time to take a step back and do a clean build of
 everything with a more stock config, because I have no idea what's going
 wrong. I'll switch from my laptop to my desktop for quicker builds.
+
+## 2022-07-09
+
+The error I hit above was related to this issue: https://github.com/rust-lang/rust/issues/97322
+
+Using the patch in that bug I'm able to get past the error, and now `./x.py build` succeeds. Hooray!
+
+To get `./x.py install` to work I had to change the `sysconfdir` to be
+relative, turn off docs, and limit the set of tools being built. Now my
+config looks like this:
+
+```toml
+profile = "user"
+changelog-seen = 2
+
+[llvm]
+download-ci-llvm = true
+
+[install]
+prefix = "/var/home/nbishop/src/rust/bishinstall"
+sysconfdir = "etc"
+
+[build]
+target = ["x86_64-unknown-uefi"]
+docs = false
+tools = ["cargo"]
+```
+
+Now it installs. Hooray! Unfortunately, compiling an actual project
+fails because `build.rs`'s tend to expect `std` to be available. So I
+guess maybe I need to build the `x86_64-unknown-linux-gnu` target in
+addition to the uefi target?
+
+Changed config to:
+```toml
+profile = "user"
+changelog-seen = 2
+
+[llvm]
+download-ci-llvm = true
+
+[install]
+prefix = "/var/home/nbishop/src/rust/bishinstall"
+sysconfdir = "etc"
+
+[build]
+target = ["x86_64-unknown-linux-gnu", "x86_64-unknown-uefi"]
+docs = false
+tools = ["cargo"]
+```
+
+Reran `./x.py build` and `./x.py install`.
+
+Those succeed, and I get a bit further with building a project, but it
+fails at the link stage:
+
+```
+error: linker `rust-lld` not found
+  |
+  = note: No such file or directory (os error 2)
+
+note: the msvc targets depend on the msvc linker but `link.exe` was not found
+```
+
+Let's try adding this to the config:
+
+```toml
+[rust]
+lld = true
+```
+
+Now `./x.py build` fails with:
+```
+CMake Error: The source directory "/var/home/nbishop/src/rust/src/llvm-project/lld" does not exist.
+```
+
+Let's try setting `download-ci-llvm = false` in the config. That's a big
+change so `./x.py build` takes a long time, but it succeeds as does `install`.
+
+Final config:
+```toml
+profile = "user"
+changelog-seen = 2
+
+[llvm]
+download-ci-llvm = false
+
+[install]
+prefix = "/var/home/nbishop/src/rust/bishinstall"
+sysconfdir = "etc"
+
+[build]
+target = ["x86_64-unknown-linux-gnu", "x86_64-unknown-uefi"]
+docs = false
+tools = ["cargo"]
+
+[rust]
+lld = true
+```
+
+Rust repo commit: 6c20ab744b0f82646d90ce9d25894823abc9c669
+
+And now it works; I can build [uefi-div-bug](git@github.com:nicholasbishop/uefi-div-bug.git) with:
+```
+PATH="/var/home/nbishop/src/rust/bishinstall/bin/:$PATH" ./run.py 
+```
+
+At this point I remember that I forgot about overriding the
+`compiler_builtins` dependency. I try adding it in as described above,
+using `patch.crates-io`, and get a bunch of `unexpected-cfgs`
+errors. Let's try this:
+
+```diff
+diff --git a/src/bootstrap/builder.rs b/src/bootstrap/builder.rs
+index fa6a5ee1668..ff59038fe18 100644
+--- a/src/bootstrap/builder.rs
++++ b/src/bootstrap/builder.rs
+@@ -1471,7 +1471,7 @@ pub fn cargo(
+         // is made to work with `--check-cfg` which is currently not easly possible until cargo
+         // get some support for setting `--check-cfg` within build script, it's the least invasive
+         // hack that still let's us have cfg checking for the vast majority of the codebase.
+-        if stage != 0 {
++        if stage == 999 {
+             // Enable cfg checking of cargo features for everything but std and also enable cfg
+             // checking of names and values.
+             //
+```
+
+New error, needed to initialize submodules in `compiler_builtins`.
+
+With that fixed, the build works.
+
+`compiler_builtins` commit: 3872a7c38c64279374b46bed5c8dec45e0a5b4fd
+
+So in theory, I can now make changes in compiler_builtins to try and fix the bug.
