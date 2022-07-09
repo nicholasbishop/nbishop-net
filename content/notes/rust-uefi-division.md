@@ -231,3 +231,7 @@ With that fixed, the build works.
 `compiler_builtins` commit: 3872a7c38c64279374b46bed5c8dec45e0a5b4fd
 
 So in theory, I can now make changes in compiler_builtins to try and fix the bug.
+
+Unfortunately, any change to `compiler_builtins` triggers a huge rebuild
+starting from `stage0 compiler artifacts`, so maybe this isn't a useful
+method for fixing the problem.
