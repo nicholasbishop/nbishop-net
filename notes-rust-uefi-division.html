@@ -17,9 +17,10 @@
 
     <a class="content" href="index.html">« Home</a>
     <!-- Little hack: only show date if not on the home page -->
-    <p class="content date">Created 2022-03-22, last updated 2022-03-23 04:00:59 UTC</p>
+    <p class="content date">Created 2022-03-22, last updated 2022-07-09 21:52:26 UTC</p>
     <div class="content">
-      <p>These are some notes related to
+      <h2>2022-03-22</h2>
+<p>These are some notes related to
 <a href="https://github.com/rust-lang/rust/issues/86494">https://github.com/rust-lang/rust/issues/86494</a>. I filed that bug a
 while ago but haven't followed up on it. The bug still repros so I
 thought I'd take a look and see if I can give better information about
@@ -98,6 +99,126 @@ errors as before.</p>
 <p>Hmm. Maybe it's time to take a step back and do a clean build of
 everything with a more stock config, because I have no idea what's going
 wrong. I'll switch from my laptop to my desktop for quicker builds.</p>
+<h2>2022-07-09</h2>
+<p>The error I hit above was related to this issue: https://github.com/rust-lang/rust/issues/97322</p>
+<p>Using the patch in that bug I'm able to get past the error, and now <code>./x.py build</code> succeeds. Hooray!</p>
+<p>To get <code>./x.py install</code> to work I had to change the <code>sysconfdir</code> to be
+relative, turn off docs, and limit the set of tools being built. Now my
+config looks like this:</p>
+<pre style="background-color:#eff1f5;"><code class="language-toml">
+<span style="color:#4f5b66;">profile = &quot;user&quot;
+</span><span style="color:#4f5b66;">changelog-seen = 2
+</span><span style="color:#4f5b66;">
+</span><span style="color:#4f5b66;">[llvm]
+</span><span style="color:#4f5b66;">download-ci-llvm = true
+</span><span style="color:#4f5b66;">
+</span><span style="color:#4f5b66;">[install]
+</span><span style="color:#4f5b66;">prefix = &quot;/var/home/nbishop/src/rust/bishinstall&quot;
+</span><span style="color:#4f5b66;">sysconfdir = &quot;etc&quot;
+</span><span style="color:#4f5b66;">
+</span><span style="color:#4f5b66;">[build]
+</span><span style="color:#4f5b66;">target = [&quot;x86_64-unknown-uefi&quot;]
+</span><span style="color:#4f5b66;">docs = false
+</span><span style="color:#4f5b66;">tools = [&quot;cargo&quot;]
+</span>
+</code></pre>
+<p>Now it installs. Hooray! Unfortunately, compiling an actual project
+fails because <code>build.rs</code>'s tend to expect <code>std</code> to be available. So I
+guess maybe I need to build the <code>x86_64-unknown-linux-gnu</code> target in
+addition to the uefi target?</p>
+<p>Changed config to:</p>
+<pre style="background-color:#eff1f5;"><code class="language-toml">
+<span style="color:#4f5b66;">profile = &quot;user&quot;
+</span><span style="color:#4f5b66;">changelog-seen = 2
+</span><span style="color:#4f5b66;">
+</span><span style="color:#4f5b66;">[llvm]
+</span><span style="color:#4f5b66;">download-ci-llvm = true
+</span><span style="color:#4f5b66;">
+</span><span style="color:#4f5b66;">[install]
+</span><span style="color:#4f5b66;">prefix = &quot;/var/home/nbishop/src/rust/bishinstall&quot;
+</span><span style="color:#4f5b66;">sysconfdir = &quot;etc&quot;
+</span><span style="color:#4f5b66;">
+</span><span style="color:#4f5b66;">[build]
+</span><span style="color:#4f5b66;">target = [&quot;x86_64-unknown-linux-gnu&quot;, &quot;x86_64-unknown-uefi&quot;]
+</span><span style="color:#4f5b66;">docs = false
+</span><span style="color:#4f5b66;">tools = [&quot;cargo&quot;]
+</span>
+</code></pre>
+<p>Reran <code>./x.py build</code> and <code>./x.py install</code>.</p>
+<p>Those succeed, and I get a bit further with building a project, but it
+fails at the link stage:</p>
+<pre style="background-color:#eff1f5;"><code>
+<span style="color:#4f5b66;">error: linker `rust-lld` not found
+</span><span style="color:#4f5b66;">  |
+</span><span style="color:#4f5b66;">  = note: No such file or directory (os error 2)
+</span><span style="color:#4f5b66;">
+</span><span style="color:#4f5b66;">note: the msvc targets depend on the msvc linker but `link.exe` was not found
+</span>
+</code></pre>
+<p>Let's try adding this to the config:</p>
+<pre style="background-color:#eff1f5;"><code class="language-toml">
+<span style="color:#4f5b66;">[rust]
+</span><span style="color:#4f5b66;">lld = true
+</span>
+</code></pre>
+<p>Now <code>./x.py build</code> fails with:</p>
+<pre style="background-color:#eff1f5;"><code>
+<span style="color:#4f5b66;">CMake Error: The source directory &quot;/var/home/nbishop/src/rust/src/llvm-project/lld&quot; does not exist.
+</span>
+</code></pre>
+<p>Let's try setting <code>download-ci-llvm = false</code> in the config. That's a big
+change so <code>./x.py build</code> takes a long time, but it succeeds as does <code>install</code>.</p>
+<p>Final config:</p>
+<pre style="background-color:#eff1f5;"><code class="language-toml">
+<span style="color:#4f5b66;">profile = &quot;user&quot;
+</span><span style="color:#4f5b66;">changelog-seen = 2
+</span><span style="color:#4f5b66;">
+</span><span style="color:#4f5b66;">[llvm]
+</span><span style="color:#4f5b66;">download-ci-llvm = false
+</span><span style="color:#4f5b66;">
+</span><span style="color:#4f5b66;">[install]
+</span><span style="color:#4f5b66;">prefix = &quot;/var/home/nbishop/src/rust/bishinstall&quot;
+</span><span style="color:#4f5b66;">sysconfdir = &quot;etc&quot;
+</span><span style="color:#4f5b66;">
+</span><span style="color:#4f5b66;">[build]
+</span><span style="color:#4f5b66;">target = [&quot;x86_64-unknown-linux-gnu&quot;, &quot;x86_64-unknown-uefi&quot;]
+</span><span style="color:#4f5b66;">docs = false
+</span><span style="color:#4f5b66;">tools = [&quot;cargo&quot;]
+</span><span style="color:#4f5b66;">
+</span><span style="color:#4f5b66;">[rust]
+</span><span style="color:#4f5b66;">lld = true
+</span>
+</code></pre>
+<p>Rust repo commit: 6c20ab744b0f82646d90ce9d25894823abc9c669</p>
+<p>And now it works; I can build <a href="git@github.com:nicholasbishop/uefi-div-bug.git">uefi-div-bug</a> with:</p>
+<pre style="background-color:#eff1f5;"><code>
+<span style="color:#4f5b66;">PATH=&quot;/var/home/nbishop/src/rust/bishinstall/bin/:$PATH&quot; ./run.py 
+</span>
+</code></pre>
+<p>At this point I remember that I forgot about overriding the
+<code>compiler_builtins</code> dependency. I try adding it in as described above,
+using <code>patch.crates-io</code>, and get a bunch of <code>unexpected-cfgs</code>
+errors. Let's try this:</p>
+<pre style="background-color:#eff1f5;"><code class="language-diff">
+<span style="color:#4f5b66;">diff --git a/src/bootstrap/builder.rs b/src/bootstrap/builder.rs
+</span><span style="color:#4f5b66;">index fa6a5ee1668..ff59038fe18 100644
+</span><span style="color:#4f5b66;">--- a/src/bootstrap/builder.rs
+</span><span style="color:#4f5b66;">+++ b/src/bootstrap/builder.rs
+</span><span style="color:#4f5b66;">@@ -1471,7 +1471,7 @@ pub fn cargo(
+</span><span style="color:#4f5b66;">         // is made to work with `--check-cfg` which is currently not easly possible until cargo
+</span><span style="color:#4f5b66;">         // get some support for setting `--check-cfg` within build script, it&#39;s the least invasive
+</span><span style="color:#4f5b66;">         // hack that still let&#39;s us have cfg checking for the vast majority of the codebase.
+</span><span style="color:#bf616a;">-        if stage != 0 {
+</span><span style="color:#a3be8c;">+        if stage == 999 {
+</span><span style="color:#4f5b66;">             // Enable cfg checking of cargo features for everything but std and also enable cfg
+</span><span style="color:#4f5b66;">             // checking of names and values.
+</span><span style="color:#4f5b66;">             //
+</span>
+</code></pre>
+<p>New error, needed to initialize submodules in <code>compiler_builtins</code>.</p>
+<p>With that fixed, the build works.</p>
+<p><code>compiler_builtins</code> commit: 3872a7c38c64279374b46bed5c8dec45e0a5b4fd</p>
+<p>So in theory, I can now make changes in compiler_builtins to try and fix the bug.</p>
 
     </div>
 
