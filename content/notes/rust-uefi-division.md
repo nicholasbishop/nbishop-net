@@ -99,7 +99,7 @@ wrong. I'll switch from my laptop to my desktop for quicker builds.
 
 ## 2022-07-09
 
-The error I hit above was related to this issue: https://github.com/rust-lang/rust/issues/97322
+The error I hit above was related to this issue: <https://github.com/rust-lang/rust/issues/97322>
 
 Using the patch in that bug I'm able to get past the error, and now `./x.py build` succeeds. Hooray!
 
