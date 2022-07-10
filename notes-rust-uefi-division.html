@@ -17,7 +17,7 @@
 
     <a class="content" href="index.html">« Home</a>
     <!-- Little hack: only show date if not on the home page -->
-    <p class="content date">Created 2022-03-22, last updated 2022-07-09 22:16:12 UTC</p>
+    <p class="content date">Created 2022-03-22, last updated 2022-07-10 02:52:26 UTC</p>
     <div class="content">
       <h2>2022-03-22</h2>
 <p>These are some notes related to
@@ -222,6 +222,17 @@ errors. Let's try this:</p>
 <p>Unfortunately, any change to <code>compiler_builtins</code> triggers a huge rebuild
 starting from <code>stage0 compiler artifacts</code>, so maybe this isn't a useful
 method for fixing the problem.</p>
+<hr />
+<p>After putting the problem down for a few hours, I think I've found the
+fix. Windows has a weird ABI for certain 128-bit integer intrinsics that
+compiler-builtins handles with a special <code>win64_128bit_abi_hack</code>
+attribute. That attribute wasn't being applied for
+<code>x86_64-unknown-uefi</code>. Once I enabled it and rebuilt, the test project
+was able to successfully do division!</p>
+<p>Put up a PR here: <a href="https://github.com/rust-lang/compiler-builtins/pull/475">Enable win64_128bit_abi_hack for
+x86_64-unknown-uefi</a></p>
+<p>Assuming that it is merged, we'll need to update the version of
+compiler-builtins in the rust repo and then we should be all good.</p>
 
     </div>
 
