@@ -235,3 +235,18 @@ So in theory, I can now make changes in compiler_builtins to try and fix the bug
 Unfortunately, any change to `compiler_builtins` triggers a huge rebuild
 starting from `stage0 compiler artifacts`, so maybe this isn't a useful
 method for fixing the problem.
+
+---
+
+After putting the problem down for a few hours, I think I've found the
+fix. Windows has a weird ABI for certain 128-bit integer intrinsics that
+compiler-builtins handles with a special `win64_128bit_abi_hack`
+attribute. That attribute wasn't being applied for
+`x86_64-unknown-uefi`. Once I enabled it and rebuilt, the test project
+was able to successfully do division!
+
+Put up a PR here: [Enable win64_128bit_abi_hack for
+x86_64-unknown-uefi](https://github.com/rust-lang/compiler-builtins/pull/475)
+
+Assuming that it is merged, we'll need to update the version of
+compiler-builtins in the rust repo and then we should be all good.
