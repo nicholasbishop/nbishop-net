@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="x-ua-compatible" content="ie=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Week 0022</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="icon" href="favicon.png" />
+
+    <script defer data-domain="nbishop.net" src="https://plausible.io/js/plausible.js"></script>
+  </head>
+
+  <body>
+    <h1>Week 0022</h1>
+
+    <a class="content" href="index.html">« Home</a>
+    <!-- Little hack: only show date if not on the home page -->
+    <p class="content date">Created 2022-07-11, last updated 2022-07-13 16:04:34 UTC</p>
+    <div class="content">
+      <h2>uefi-rs</h2>
+<ul>
+<li>Rustup 1.25 made some changes to the environment that commands are run
+in, including <code>cargo run</code>, which caused our xtask commands to
+break. Fixed by unsetting some variables and modifying the <code>PATH</code> (the
+latter fix is needed for Windows specifically).
+<a href="https://github.com/rust-osdev/uefi-rs/pull/466">PR</a></li>
+</ul>
+<h2>Rust</h2>
+<ul>
+<li>The Rustup changes mentioned above were discussed in
+<a href="https://github.com/rust-lang/rustup/issues/3031">https://github.com/rust-lang/rustup/issues/3031</a>. I contributed to
+that issue a bit, and then filed
+<a href="https://github.com/rust-lang/rustup/issues/3036">https://github.com/rust-lang/rustup/issues/3036</a> for the Windows
+<code>PATH</code> problem.</li>
+</ul>
+
+    </div>
+
+    <hr />
+
+    <div class="content">
+      © 2022 <a href="mailto:nbishop@nbishop.net">Nicholas Bishop</a>
+      •
+      <a href="index.html">Home</a>
+      •
+      <a href="https://github.com/nicholasbishop/nbishop-net">Repo</a>
+
+      <!-- License -->
+      <div id="license">
+        Unless otherwise noted, content is licensed under
+        <a href="https://creativecommons.org/licenses/by/4.0">CC BY 4.0</a>.
+        Code blocks are <em>additionally</em> available under
+        <a href="https://creativecommons.org/share-your-work/public-domain/cc0">CC0</a> and
+        <a href="https://www.apache.org/licenses/LICENSE-2.0.txt">Apache License version 2.0</a>
+        at your option.
+      </div>
+    </div>
+  </body>
+</html>
