@@ -17,16 +17,34 @@
 
     <a class="content" href="index.html">« Home</a>
     <!-- Little hack: only show date if not on the home page -->
-    <p class="content date">Created 2022-07-11, last updated 2022-07-13 16:08:31 UTC</p>
+    <p class="content date">Created 2022-07-11, last updated 2022-07-13 16:14:01 UTC</p>
     <div class="content">
       <p><a href="images-2022-07-02-sunset.jpg"><img class="photo" src="images-2022-07-02-sunset-thumb.jpg" title="Photo of a sunset with orange clouds over Prospect Park"></img></a></p>
 <h2>uefi-rs</h2>
 <ul>
-<li>Rustup 1.25 made some changes to the environment that commands are run
+<li>
+<p>Rustup 1.25 made some changes to the environment that commands are run
 in, including <code>cargo run</code>, which caused our xtask commands to
 break. Fixed by unsetting some variables and modifying the <code>PATH</code> (the
 latter fix is needed for Windows specifically).
-<a href="https://github.com/rust-osdev/uefi-rs/pull/466">PR</a></li>
+<a href="https://github.com/rust-osdev/uefi-rs/pull/466">PR</a></p>
+</li>
+<li>
+<p>In response to this
+<a href="https://github.com/rust-osdev/uefi-rs/issues/461">issue</a>, I worked on
+adding support for running VMs under Windows without requiring
+WSL. (Incidentally, the issue suggests this is a regression from the
+<code>build.py</code> script, but I'm reasonably sure that isn't the case; that
+script had Unix assumptions baked in too.) I had some difficulty
+getting this to work due to the way that Windows named pipes are
+handled in QEMU. The whole process gets stuck if there's any trailing
+data after a JSON message sent to qmp (in our case, a trailing
+newline). Figuring that out took a long detour through building QEMU
+locally, adding in lots of debug messages, and incorrectly thinking it
+was a bug in QEMU's coroutine usage. The working implementation ends
+up being pretty simple though:
+<a href="https://github.com/rust-osdev/uefi-rs/pull/463">PR</a></p>
+</li>
 </ul>
 <h2>Rust</h2>
 <ul>
