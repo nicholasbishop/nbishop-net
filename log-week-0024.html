@@ -17,7 +17,7 @@
 
     <a class="content" href="index.html">« Home</a>
     <!-- Little hack: only show date if not on the home page -->
-    <p class="content date">Created 2022-07-25, last updated 2022-07-26 03:54:55 UTC</p>
+    <p class="content date">Created 2022-07-25, last updated 2022-07-28 01:46:11 UTC</p>
     <div class="content">
       <h2>uefi-rs</h2>
 <ul>
@@ -25,6 +25,16 @@
 remind myself to autodetect the OVMF files on Windows.</li>
 <li>Put up a PR with some minor fixes for the <code>#[entry]</code> macro error
 tests: <a href="https://github.com/rust-osdev/uefi-rs/pull/471">https://github.com/rust-osdev/uefi-rs/pull/471</a></li>
+</ul>
+<h2>Rust</h2>
+<ul>
+<li>Opened a <a href="https://github.com/rust-lang/rust/pull/99765">PR</a> to fix
+building the uefi targets in the rust compiler; it was incorrectly
+trying to build <code>std</code> which is not yet supported (although there is an
+active project to change that).</li>
+<li>There's a <a href="https://github.com/rust-lang/rust/pull/99760">new project</a>
+to work on moving the UEFI targets to tier 2! I've volunteered to help
+as a co-maintainer.</li>
 </ul>
 
     </div>
