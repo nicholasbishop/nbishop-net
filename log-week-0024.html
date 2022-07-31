@@ -17,7 +17,7 @@
 
     <a class="content" href="index.html">« Home</a>
     <!-- Little hack: only show date if not on the home page -->
-    <p class="content date">Created 2022-07-25, last updated 2022-07-28 01:46:11 UTC</p>
+    <p class="content date">Created 2022-07-25, last updated 2022-07-31 13:51:21 UTC</p>
     <div class="content">
       <h2>uefi-rs</h2>
 <ul>
@@ -25,6 +25,11 @@
 remind myself to autodetect the OVMF files on Windows.</li>
 <li>Put up a PR with some minor fixes for the <code>#[entry]</code> macro error
 tests: <a href="https://github.com/rust-osdev/uefi-rs/pull/471">https://github.com/rust-osdev/uefi-rs/pull/471</a></li>
+<li>Spent a while teasing out all the differences in where OVMF files get
+installed on different systems so we can do a better job of
+autodetecting that in the uefi-test-runner. Also some tweaks to the
+CLI interface, easier running of QEMU on Windows, and other little
+cleanups: <a href="https://github.com/rust-osdev/uefi-rs/pull/474">https://github.com/rust-osdev/uefi-rs/pull/474</a></li>
 </ul>
 <h2>Rust</h2>
 <ul>
