@@ -17,7 +17,7 @@
 
     <a class="content" href="index.html">« Home</a>
     <!-- Little hack: only show date if not on the home page -->
-    <p class="content date">Created 2022-08-01, last updated 2022-08-03 03:35:38 UTC</p>
+    <p class="content date">Created 2022-08-01, last updated 2022-08-07 01:02:29 UTC</p>
     <div class="content">
       <h2>gpt-disk-rs</h2>
 <ul>
@@ -28,6 +28,29 @@ has now been made and new versions of the crates have been
 released. (Took me a few tries to get the license README links
 correct, so ended up with a few extra dot releases of <code>uguid</code>, but
 should be all good now.)</li>
+</ul>
+<h2>uefi-rs</h2>
+<ul>
+<li>Spent some time testing and reviewing a
+<a href="https://github.com/rust-osdev/uefi-rs/pull/467">PR</a> that adds support
+for a couple more disk protocols. The nonblocking stuff was a bit tricky.</li>
+</ul>
+<h2>Rust</h2>
+<ul>
+<li>Opened another <a href="https://github.com/rust-lang/compiler-builtins/pull/486"><code>compiler_builtins</code>
+PR</a> to fix
+some more UEFI intrinsics. For some reason the ABI intrinsics that
+convert from i128/u128 to f32/f64 are different depending on whether
+softfloat is enabled.</li>
+<li>Opened a <a href="https://github.com/rust-lang/rust/pull/100117">Rust PR</a> to
+update the <code>cc</code> crate to latest. That fixes some issues with compiling
+<code>compiler_builtins</code> for the UEFI targets.</li>
+<li>Opened a <a href="https://github.com/rust-lang/rust/pull/100038">Rust PR</a> to
+add documentation for the <code>no-std</code> target build option. Since
+<a href="https://github.com/rust-lang/rust/pull/99765">https://github.com/rust-lang/rust/pull/99765</a> was merged this option
+isn't needed for UEFI anymore, but can hopefully help future people
+trying to build for new targets that don't support <code>std</code> (until such
+time as <a href="https://github.com/rust-lang/rust/pull/99765">https://github.com/rust-lang/rust/pull/99765</a> is fixed).</li>
 </ul>
 
     </div>
