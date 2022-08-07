@@ -17,7 +17,7 @@
 
     <a class="content" href="index.html">« Home</a>
     <!-- Little hack: only show date if not on the home page -->
-    <p class="content date">Created 2022-08-01, last updated 2022-08-07 01:02:29 UTC</p>
+    <p class="content date">Created 2022-08-01, last updated 2022-08-07 01:41:45 UTC</p>
     <div class="content">
       <h2>gpt-disk-rs</h2>
 <ul>
@@ -51,6 +51,9 @@ add documentation for the <code>no-std</code> target build option. Since
 isn't needed for UEFI anymore, but can hopefully help future people
 trying to build for new targets that don't support <code>std</code> (until such
 time as <a href="https://github.com/rust-lang/rust/pull/99765">https://github.com/rust-lang/rust/pull/99765</a> is fixed).</li>
+<li>Opened a <a href="https://github.com/rust-lang/rust/pull/100218">Rust PR</a> to
+update the <code>compiler_builtins</code> crate to latest. This will fix some
+(but not all) UEFI intrinsic ABI issues.</li>
 </ul>
 
     </div>
