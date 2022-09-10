@@ -17,7 +17,7 @@
 
     <a class="content" href="index.html">« Home</a>
     <!-- Little hack: only show date if not on the home page -->
-    <p class="content date">Created 2022-09-05, last updated 2022-09-10 15:16:06 UTC</p>
+    <p class="content date">Created 2022-09-05, last updated 2022-09-10 15:22:57 UTC</p>
     <div class="content">
       <h2>uefi-rs</h2>
 <ul>
@@ -45,6 +45,13 @@ accidental change to <code>Guid</code>'s repr.</li>
 <li>I realized there were some flaws with the way <code>uguid</code>'s macros were
 implemented. Some fixes in
 <a href="https://github.com/google/gpt-disk-rs/pull/86">https://github.com/google/gpt-disk-rs/pull/86</a>, not yet released.</li>
+</ul>
+<h2>Rust</h2>
+<ul>
+<li>The <a href="https://github.com/rust-lang/rust/pull/101413">PR</a> to fix UEFI
+target compilation on latest nightly finally got merged. Filed a
+followup ticket to look into why <code>DLLImport</code> annotations are occuring
+in the first place: <a href="https://github.com/rust-lang/rust/issues/101656">https://github.com/rust-lang/rust/issues/101656</a>.</li>
 </ul>
 
     </div>
