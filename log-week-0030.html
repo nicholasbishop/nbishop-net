@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="x-ua-compatible" content="ie=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Week 0030</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="icon" href="favicon.png" />
+
+    <script defer data-domain="nbishop.net" src="https://plausible.io/js/plausible.js"></script>
+  </head>
+
+  <body>
+    <h1>Week 0030</h1>
+
+    <a class="content" href="index.html">« Home</a>
+    <!-- Little hack: only show date if not on the home page -->
+    <p class="content date">Created 2022-09-05, last updated 2022-09-10 15:16:06 UTC</p>
+    <div class="content">
+      <h2>uefi-rs</h2>
+<ul>
+<li>Released new versions of all the crates:
+<a href="https://github.com/rust-osdev/uefi-rs/issues/501">https://github.com/rust-osdev/uefi-rs/issues/501</a>. There are some
+significant API changes around opening and using protocols in this
+release, so we waited a bit since the last set of releases to avoid
+too much churn. I think the end result is pretty good though, the
+library is both safer and easier to use now.</li>
+<li><a href="https://github.com/rust-osdev/uefi-rs/pull/514">PR</a> to improve the
+return types of the methods for converting between <code>DevicePath</code>s and
+text.</li>
+</ul>
+<h2>rustup</h2>
+<ul>
+<li><a href="https://github.com/rust-lang/rustup/pull/3067">PR</a> to improve
+rustup's documentation of <code>rust-toolchain.toml</code>.</li>
+</ul>
+<h2>gpt-disk-rs</h2>
+<ul>
+<li><a href="https://github.com/google/gpt-disk-rs/pull/80">PR</a> to add an
+<code>AlignedGuid</code> type, followed by a
+<a href="https://github.com/google/gpt-disk-rs/pull/84">PR</a> to undo an
+accidental change to <code>Guid</code>'s repr.</li>
+<li>I realized there were some flaws with the way <code>uguid</code>'s macros were
+implemented. Some fixes in
+<a href="https://github.com/google/gpt-disk-rs/pull/86">https://github.com/google/gpt-disk-rs/pull/86</a>, not yet released.</li>
+</ul>
+
+    </div>
+
+    <hr />
+
+    <div class="content">
+      © 2022 <a href="mailto:nbishop@nbishop.net">Nicholas Bishop</a>
+      •
+      <a href="index.html">Home</a>
+      •
+      <a href="https://github.com/nicholasbishop/nbishop-net">Repo</a>
+
+      <!-- License -->
+      <div id="license">
+        Unless otherwise noted, content is licensed under
+        <a href="https://creativecommons.org/licenses/by/4.0">CC BY 4.0</a>.
+        Code blocks are <em>additionally</em> available under
+        <a href="https://creativecommons.org/share-your-work/public-domain/cc0">CC0</a> and
+        <a href="https://www.apache.org/licenses/LICENSE-2.0.txt">Apache License version 2.0</a>
+        at your option.
+      </div>
+    </div>
+  </body>
+</html>
