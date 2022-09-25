@@ -17,7 +17,7 @@
 
     <a class="content" href="index.html">« Home</a>
     <!-- Little hack: only show date if not on the home page -->
-    <p class="content date">Created 2022-09-19, last updated 2022-09-24 20:18:04 UTC</p>
+    <p class="content date">Created 2022-09-19, last updated 2022-09-25 21:06:34 UTC</p>
     <div class="content">
       <h2>Rust</h2>
 <ul>
@@ -41,6 +41,18 @@ intentional about when the required nightly version changes.</li>
 <li><a href="https://github.com/rust-osdev/uefi-rs/pull/518">PR</a> to add some
 address type aliases and fix the definition of <code>AllocateType</code> on
 <code>i686-unknown-uefi</code>.</li>
+<li>We got an issue a while ago about better supporting vscode+rust
+analyzer. This was something I hadn't thought about before; I don't
+use rust-analyzer or any particularly fancy IDE stuff myself. (Just as
+a matter of personal preference I don't like when docs pop up over the
+code, or red squigglies show up under code that I'm working on, or the
+struggle to get it working with any larger project that inevitably has
+some kind of custom config.) However, I know others like these tools
+so I very much want to support their use case as well as we can. I
+spent a little time figuring out how to get vscode+rust analyzer set
+up to test it out, and documented some issues I saw and solutions to
+some of them:
+https://github.com/rust-osdev/uefi-rs/issues/511#issuecomment-1257277879</li>
 </ul>
 
     </div>
