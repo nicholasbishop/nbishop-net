@@ -20,10 +20,10 @@ pub fn publish() -> Result<()> {
     }
 
     // Create an empty repo.
-    Command::with_args("git", &["init", repo_path]).run()?;
+    Command::with_args("git", ["init", repo_path]).run()?;
 
     let set_config = |key, val| {
-        Command::with_args("git", &["-C", repo_path, "config", key, val]).run()
+        Command::with_args("git", ["-C", repo_path, "config", key, val]).run()
     };
 
     // Configure the credential helper. The credential helper helps
@@ -38,16 +38,16 @@ pub fn publish() -> Result<()> {
     // Add the remote.
     Command::with_args(
         "git",
-        &["-C", repo_path, "remote", "add", "origin", url],
+        ["-C", repo_path, "remote", "add", "origin", url],
     )
     .run()?;
 
     // Fetch the branch.
-    Command::with_args("git", &["-C", repo_path, "fetch", "origin", branch])
+    Command::with_args("git", ["-C", repo_path, "fetch", "origin", branch])
         .run()?;
 
     // Check out the branch.
-    Command::with_args("git", &["-C", repo_path, "checkout", branch]).run()?;
+    Command::with_args("git", ["-C", repo_path, "checkout", branch]).run()?;
 
     // Delete all the HTML files currently present. Allow this to fail
     // in case there's nothing there yet.
@@ -56,7 +56,7 @@ pub fn publish() -> Result<()> {
     // files from existing. But we don't want to delete the
     // automatically-added CNAME file. So for now compromise and just
     // delete html files.
-    Command::with_args("git", &["-C", repo_path, "rm", "*.html"])
+    Command::with_args("git", ["-C", repo_path, "rm", "*.html"])
         .disable_check()
         .run()?;
 
@@ -69,12 +69,12 @@ pub fn publish() -> Result<()> {
     }
 
     // Add all the files.
-    Command::with_args("git", &["-C", repo_path, "add", "*"]).run()?;
+    Command::with_args("git", ["-C", repo_path, "add", "*"]).run()?;
 
     // Commit. Allow it to be empty because the output may be unchanged.
     Command::with_args(
         "git",
-        &[
+        [
             "-C",
             repo_path,
             "commit",
@@ -86,7 +86,7 @@ pub fn publish() -> Result<()> {
     .run()?;
 
     // Push.
-    Command::with_args("git", &["-C", repo_path, "push"]).run()?;
+    Command::with_args("git", ["-C", repo_path, "push"]).run()?;
 
     Ok(())
 }

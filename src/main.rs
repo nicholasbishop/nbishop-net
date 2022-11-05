@@ -23,7 +23,7 @@ fn main() -> Result<()> {
     render::render()?;
 
     if opt.open {
-        Command::with_args("xdg-open", &["output/index.html"]).run()?;
+        Command::with_args("xdg-open", ["output/index.html"]).run()?;
     }
 
     if opt.publish {

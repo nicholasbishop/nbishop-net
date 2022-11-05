@@ -104,7 +104,7 @@ fn get_markdown_content(source: &Utf8Path) -> Result<MarkdownContent> {
 fn get_last_modified(path: &Utf8Path) -> Result<OffsetDateTime> {
     // "%ct" is the committer date formatted in unix time.
     let output = Command::new("git")
-        .args(&["log", "-1", "--format=format:%ct"])
+        .args(["log", "-1", "--format=format:%ct"])
         .arg(path)
         .output()?;
     if !output.status.success() {
@@ -336,7 +336,7 @@ fn render_markdown(state: RenderMarkdownState) -> Result<()> {
     ctx.insert("show_home_link", &show_home_link);
     let html = state.tera.render("base.html", &ctx)?;
 
-    fs::write(&state.output_path, html)?;
+    fs::write(state.output_path, html)?;
 
     Ok(())
 }
