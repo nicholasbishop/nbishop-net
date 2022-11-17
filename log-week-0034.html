@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="x-ua-compatible" content="ie=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Week 0034</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="icon" href="favicon.png" />
+
+    <script defer data-domain="nbishop.net" src="https://plausible.io/js/plausible.js"></script>
+  </head>
+
+  <body>
+    <h1>Week 0034</h1>
+
+    <a class="content" href="index.html">« Home</a>
+    <!-- Little hack: only show date if not on the home page -->
+    <p class="content date">Created 2022-11-14, last updated 2022-11-17 02:10:35 UTC</p>
+    <div class="content">
+      <h2>Rust</h2>
+<p>I discovered that the new disted <code>i686-unknown-uefi</code> target hits linker
+errors when you try to use it. Filed an
+[issue](https://github.com/rust-lang/rust/issues/104326 for that and
+started looking into it.</p>
+<p>There are a few issues that need to be solved. First up, an asm issue:</p>
+<p>Asm files aren't getting a special symbol needed by the linker when safe
+SEH is enabled. It might be possible to solve that with some extra
+compilation flags, except those flags are asm-specific and clang doesn't
+like it when you pass the flag to C files. Since compiler_builtins uses
+a single <code>cc::Build</code> object for all files, we can't easily pass
+asm-specific flags.</p>
+<p>For now I solved this in compiler-builtins by just disabling the asm
+implementations on UEFI:
+<a href="https://github.com/rust-lang/compiler-builtins/pull/504">PR</a>. I also
+filed an <a href="https://github.com/rust-lang/cc-rs/issues/751">issue</a> in cc-rs
+suggesting adding a way to set asm-specific flags. That got a quick
+response indicating that a patch would be welcome. I put together a
+<a href="https://github.com/rust-lang/cc-rs/pull/752">PR</a> implementing that,
+which got reviewed and merged in about a half hour, which is a really
+nice response time :)</p>
+<p>The second issue is that the dist script for the UEFI targets is
+defaulting to gcc for the C files in compiler builtins. That causes us
+to end up with a compiler-builtins rlib that contains a mix of PE
+objects (from the Rust code) and ELF objects (from the C code). That
+doesn't actually cause an error when building compiler-builtins or Rust,
+which is why we didn't notice it. However, if you try to actually
+reference one of the symbols in an ELF object you get a linker error.</p>
+<p>To solve this we can switch the dist to use clang, but that exposes
+another issue: one of the C files in compiler-rt that compiler-builtins
+uses tries to include <code>stdlib.h</code>. That is not really compatible with
+compiling with <code>-ffreestanding</code>, and can lead to incompatible type
+definition errors.</p>
+<p>My first attempt to solve this was to just skip including that file
+(<a href="https://github.com/rust-lang/compiler-builtins/pull/505">PR</a>), but
+that was wrong because the file defines functions that are used in other
+files. Easy to miss because again, you don't find out that it's wrong
+until you actually call something that (transitively) uses the missing
+symbol.</p>
+<p>Then I realized we could just provide an empty <code>stdlib.h</code> file since
+nothing actually needs to be declared for the C file to compile in our
+case. Made a new
+<a href="https://github.com/rust-lang/compiler-builtins/pull/506">PR</a> for that.</p>
+<p>That's the status as of Wednesday; once the compiler-builtins side of
+things is done (including making a new release) I'll need to update the
+version of compiler-builtins in the Rust repo, then I should be able to
+update the dist script to use clang instead of gcc.</p>
+<p>Once that's done I also want to enable CI for the aarch64 and i686 UEFI
+targets.</p>
+<h2>uefi-rs</h2>
+<ul>
+<li>Released new versions of all the crates.</li>
+</ul>
+
+    </div>
+
+    <hr />
+
+    <div class="content">
+      © 2022 <a href="mailto:nbishop@nbishop.net">Nicholas Bishop</a>
+      •
+      <a href="index.html">Home</a>
+      •
+      <a href="https://github.com/nicholasbishop/nbishop-net">Repo</a>
+
+      <!-- License -->
+      <div id="license">
+        Unless otherwise noted, content is licensed under
+        <a href="https://creativecommons.org/licenses/by/4.0">CC BY 4.0</a>.
+        Code blocks are <em>additionally</em> available under
+        <a href="https://creativecommons.org/share-your-work/public-domain/cc0">CC0</a> and
+        <a href="https://www.apache.org/licenses/LICENSE-2.0.txt">Apache License version 2.0</a>
+        at your option.
+      </div>
+    </div>
+  </body>
+</html>
