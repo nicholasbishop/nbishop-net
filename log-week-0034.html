@@ -5,7 +5,7 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Week 0034</title>
+    <title>Week 0034 - Fun with UEFI linker errors</title>
     <link rel="stylesheet" href="style.css" />
     <link rel="icon" href="favicon.png" />
 
@@ -13,11 +13,11 @@
   </head>
 
   <body>
-    <h1>Week 0034</h1>
+    <h1>Week 0034 - Fun with UEFI linker errors</h1>
 
     <a class="content" href="index.html">« Home</a>
     <!-- Little hack: only show date if not on the home page -->
-    <p class="content date">Created 2022-11-14, last updated 2022-11-17 02:12:40 UTC</p>
+    <p class="content date">Created 2022-11-14, last updated 2022-11-20 20:43:44 UTC</p>
     <div class="content">
       <h2>Rust</h2>
 <p>I discovered that the new disted <code>i686-unknown-uefi</code> target hits linker
@@ -62,15 +62,24 @@ symbol.</p>
 nothing actually needs to be declared for the C file to compile in our
 case. Made a new
 <a href="https://github.com/rust-lang/compiler-builtins/pull/506">PR</a> for that.</p>
-<p>That's the status as of Wednesday; once the compiler-builtins side of
-things is done (including making a new release) I'll need to update the
-version of compiler-builtins in the Rust repo, then I should be able to
-update the dist script to use clang instead of gcc.</p>
-<p>Once that's done I also want to enable CI for the aarch64 and i686 UEFI
-targets.</p>
+<p>The two compiler_builtins PRs were merged and included in the 0.1.84
+release.</p>
+<p>Next I put up a <a href="https://github.com/rust-lang/rust/pull/104622">PR</a> in
+Rust to update to the new version of compiler_builtins and switch the C
+compiler for the UEFI targets to clang. I got some feedback requesting
+some kind of test to ensure that the rlibs all contain just COFF
+objects, so I spent a little time figuring that out and updated the PR.</p>
+<p>That's the status as of Sunday; once the PR is merged the next nightly
+should contain much more functional UEFI prebuilts.</p>
+<p>I also want to enable CI for the aarch64 and i686 UEFI targets. For i686
+that might require updating the Dockerfile to a newer version of Ubuntu
+that has the ovmf-ia32 package. Haven't looked at the aarch64 part yet.</p>
 <h2>uefi-rs</h2>
 <ul>
 <li>Released new versions of all the crates.</li>
+<li>Started working on making the uefi-test-runner expect just the special
+QEMU env. That will help us to make the tests more assertive:
+<a href="https://github.com/rust-osdev/uefi-rs/pull/579">PR</a></li>
 </ul>
 
     </div>
