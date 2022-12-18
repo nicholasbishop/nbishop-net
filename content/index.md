@@ -16,6 +16,7 @@ title: Nicholas Bishop
 ## Projects
 
 * [All github repositories](https://github.com/nicholasbishop?tab=repositories)
+* [Rust Conversions](https://nicholasbishop.github.io/rust-conversions/) - Quick reference for converting between various string and byte types
 * [atlassian-app-auth](https://github.com/nicholasbishop/atlassian-app-auth) - Rust library for authenticating as an Atlassian Connect App
 * [aws-build](https://github.com/nicholasbishop/aws-build) - Build Rust crates for deployment to AWS Lambda
 * [claws](https://github.com/nicholasbishop/claws) - AWS command-line tool
