@@ -21,6 +21,7 @@ title: Nicholas Bishop
 * [aws-build](https://github.com/nicholasbishop/aws-build) - Build Rust crates for deployment to AWS Lambda
 * [claws](https://github.com/nicholasbishop/claws) - AWS command-line tool
 * [cloudwatch-logs-upload](https://github.com/nicholasbishop/cloudwatch-logs-upload) - Rust library for uploading events to AWS CloudWatch Logs
+* [crdyboot](https://chromium.googlesource.com/chromiumos/platform/crdyboot/+/HEAD#crdyboot) - UEFI bootloader written in Rust
 * [emacs-conf](https://github.com/nicholasbishop/emacs-conf) - My personal Emacs configuration
 * [github-app-auth](https://github.com/nicholasbishop/github-app-auth) - Rust library for authenticating as a GitHub app
 * [uefi-rs](https://github.com/rust-osdev/uefi-rs) (co-maintainer) - Rust wrapper for UEFI
