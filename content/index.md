@@ -5,6 +5,10 @@ title: Nicholas Bishop
 * Github: [https://github.com/nicholasbishop](https://github.com/nicholasbishop)
 * [<img id="rss-logo" src="rss.svg" title="RSS logo" width=16 height=16></img> RSS feed](feed.rss)
 
+Hi, welcome to the personal website of Nicholas Bishop. I'm a software
+developer, and I use this space to talk about things I'm working on and
+thoughts I have about programming.
+
 ## Projects
 
 * [All github repositories](https://github.com/nicholasbishop?tab=repositories)
