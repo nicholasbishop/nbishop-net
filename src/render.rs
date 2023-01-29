@@ -148,7 +148,7 @@ fn get_all_contents(conf: &Conf) -> Result<Vec<Content>> {
         } else if plain_file_extensions.contains(&extension) {
             content_type = ContentType::PlainFile;
         } else {
-            println!("ignoring {}", source);
+            println!("ignoring {source}");
             continue;
         }
 
@@ -176,7 +176,7 @@ fn get_all_contents(conf: &Conf) -> Result<Vec<Content>> {
 
 fn generate_rss(conf: &Conf, contents: &[Content]) -> Result<()> {
     let output_path = conf.output_dir.join("feed.rss");
-    println!("generating rss -> {}", output_path);
+    println!("generating rss -> {output_path}");
 
     let base_url = "http://nbishop.net";
 
