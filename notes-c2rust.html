@@ -34,30 +34,24 @@ missed something!), so it's all a bit confusing.</p>
 <ol>
 <li>
 <p>Create a <code>Containerfile</code>:</p>
-<pre style="background-color:#eff1f5;"><code class="language-docker">
-<span style="color:#4f5b66;">FROM docker://immunant/c2rust:archlinux-base-latest
+<pre style="background-color:#eff1f5;"><code class="language-docker"><span style="color:#4f5b66;">FROM docker://immunant/c2rust:archlinux-base-latest
 </span><span style="color:#4f5b66;">
 </span><span style="color:#4f5b66;">RUN git clone https://github.com/immunant/c2rust.git
 </span><span style="color:#4f5b66;">WORKDIR c2rust
 </span><span style="color:#4f5b66;">RUN cargo +nightly-2019-12-05 build --release --locked
 </span><span style="color:#4f5b66;">
 </span><span style="color:#4f5b66;">ENTRYPOINT [&quot;/c2rust/target/release/c2rust&quot;]
-</span>
-</code></pre>
+</span></code></pre>
 </li>
 <li>
 <p>Build it (this will take a while):</p>
-<pre style="background-color:#eff1f5;"><code>
-<span style="color:#4f5b66;">podman build -f Containerfile -t c2rust
-</span>
-</code></pre>
+<pre style="background-color:#eff1f5;"><code><span style="color:#4f5b66;">podman build -f Containerfile -t c2rust
+</span></code></pre>
 </li>
 <li>
 <p>Run it in the container:</p>
-<pre style="background-color:#eff1f5;"><code>
-<span style="color:#4f5b66;">podman run -v$PWD:/host:z c2rust transpile --output-dir /host/transpile/ /host/compile_commands.json
-</span>
-</code></pre>
+<pre style="background-color:#eff1f5;"><code><span style="color:#4f5b66;">podman run -v$PWD:/host:z c2rust transpile --output-dir /host/transpile/ /host/compile_commands.json
+</span></code></pre>
 </li>
 </ol>
 <p>That last step assumes that you have a <code>compile_commands.json</code> in the
