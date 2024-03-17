@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="x-ua-compatible" content="ie=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Cleaning up old Rust projects</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="icon" href="favicon.png" />
+
+    <script defer data-domain="nbishop.net" src="https://plausible.io/js/plausible.js"></script>
+  </head>
+
+  <body>
+    <h1>Cleaning up old Rust projects</h1>
+
+    <a class="content" href="index.html">« Home</a>
+    <!-- Little hack: only show date if not on the home page -->
+    <p class="content date">Created 2024-03-17, last updated 2024-03-17 18:15:56 UTC</p>
+    <div class="content">
+      <p>I recently learned about the maintainer dashboard feature of lib.rs:
+<a href="https://lib.rs/dash">lib.rs/dash</a>. I don't think the dashboard is linked anywhere, so
+you just have to find out about it from <a href="https://users.rust-lang.org/t/lib-rs-website-improvements/108218">somewhere else</a>,
+but it's a very handy feature. It can point out all sorts of problems
+with your crates, such as:</p>
+<ul>
+<li>Some dependency is three major versions out of date</li>
+<li>The crate is missing metadata like categories or keywords that might help people find it</li>
+<li>The crate hasn't been updated in nine years, is it still maintained?</li>
+</ul>
+<p>I have created a fair number of crates over the years, most of which I
+no longer actually maintain. Maybe the crate was for a hobby project
+that I've since moved on from, or for a job that I left years
+ago. Whatever the reason, I have certainly accumulated a lot of stale
+crates, and the dashboard made it easy to see them. I spent some time
+cleaning them up, which is pretty easy to do:</p>
+<ol>
+<li>Clone the repo. If it's archived, run <code>gh repo unarchive -y</code> to unarchive it.</li>
+<li>Add a note at the top of the readme:
+<pre style="background-color:#eff1f5;"><code><span style="color:#4f5b66;">**This tool is no longer under active development. If you are
+</span><span style="color:#4f5b66;">interested in taking over or repurposing the name on crates.io, feel
+</span><span style="color:#4f5b66;">free to contact me: nbishop@nbishop.net**
+</span></code></pre>
+</li>
+<li>In <code>Cargo.toml</code>, bump the patch version and add this section:
+<pre style="background-color:#eff1f5;"><code class="language-toml"><span style="color:#4f5b66;">[badges.maintenance]
+</span><span style="color:#4f5b66;">status = &quot;deprecated&quot;
+</span></code></pre>
+</li>
+<li>Commit the changes, push, and publish the final deprecated version of the package:
+<pre style="background-color:#eff1f5;"><code><span style="color:#4f5b66;">git commit -am &#39;Deprecate&#39; &amp;&amp; git push &amp;&amp; cargo publish
+</span></code></pre>
+</li>
+<li>Archive the repo: <code>gh repo archive -y</code></li>
+</ol>
+<p>Pretty straightforward, and now libs.rs will ignore the crate because
+it's deprecated. Better search results for everybody, and if someone
+wants to take over the name on crates.io (whether to start maintaining
+the crate again, or to replace it with something else entirely), they
+know who to contact.</p>
+<p>Aside: by default, <code>cargo publish</code> compiles the crate before
+publishing. I could have turned that off with <code>--no-verify</code>, but I was
+curious to see if compilation would succeed on code that hasn't been
+touched in years (nine years, in the longest case). Result: other than
+one crate that required a system dep I didn't happen to have installed,
+all crates compiled successfully. That would certainly not have been the
+case with C or C++ projects. Even figuring out <em>how</em> to compile projects
+in those languages would have taken some effort. As important as memory
+safety is, this is a good example of how Rust brings a lot more to the
+table.</p>
+<p>Final thought: I kinda wish that crates.io had some out-of-band method
+of marking a crate as deprecated, rather than having to publish a new
+version that just marks the crate as deprecated. I don't think the
+current way of doing it is unreasonable, but it would be nice to be able
+to go into the crates.io settings and mark a crate as deprecated
+there. It would also be nice to have a built-in way to say &quot;hey, I don't
+care about owning this name anymore; feel free to send an email to
+<code>&lt;address&gt;</code> to request it&quot;. Or maybe even a button that says &quot;click here
+to just take the name immediately&quot;. At any rate, this is just a minor
+wish. The current method is not bad, just takes a bit more effort.</p>
+
+    </div>
+
+    <hr />
+
+    <div class="content">
+      © 2024 <a href="mailto:nbishop@nbishop.net">Nicholas Bishop</a>
+      •
+      <a href="index.html">Home</a>
+      •
+      <a href="https://github.com/nicholasbishop/nbishop-net">Repo</a>
+
+      <!-- License -->
+      <div id="license">
+        Unless otherwise noted, content is licensed under
+        <a href="https://creativecommons.org/licenses/by/4.0">CC BY 4.0</a>.
+        Code blocks are <em>additionally</em> available under
+        <a href="https://creativecommons.org/share-your-work/public-domain/cc0">CC0</a> and
+        <a href="https://www.apache.org/licenses/LICENSE-2.0.txt">Apache License version 2.0</a>
+        at your option.
+      </div>
+    </div>
+  </body>
+</html>
