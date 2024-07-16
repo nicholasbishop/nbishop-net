@@ -16,15 +16,7 @@ jobs:
           # This does a full clone instead of a shallow clone, which is
           # needed for the "last-modified" code to work.
           fetch-depth: 0
-      - uses: actions-rs/toolchain@v1
-        with:
-          profile: minimal
-          toolchain: stable
-          override: true
       - uses: Swatinem/rust-cache@v2
-      - uses: actions-rs/cargo@v1
-        with:
-          command: run
-          args: --release -- --publish
+      - run: cargo run --release -- --publish
         env:
           GH_TOKEN: ${{ secrets.TOKEN }}
