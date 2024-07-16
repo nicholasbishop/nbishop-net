@@ -237,7 +237,7 @@ fn generate_thumbnail(content: &Content, output_path: &Utf8Path) -> Result<()> {
 
     println!("thumbnail {} -> {}", content.source, output_path);
 
-    let src = ImageReader::open(&content.source)?.decode()?;
+    let src = ImageReader::open(&content.source)?.decode()?.to_rgb8();
 
     let (width, height) = scale_to_height((src.width(), src.height()), 512);
     let thumb = imageops::resize(&src, width, height, FilterType::Lanczos3);
