@@ -1,7 +1,7 @@
 use anyhow::{anyhow, bail, Context as _, Result};
 use camino::{Utf8Path, Utf8PathBuf};
 use comrak::plugins::syntect::SyntectAdapter;
-use comrak::{ComrakOptions, ComrakPlugins, ComrakRenderOptions};
+use comrak::{Options, Plugins, RenderOptions};
 use fs_err as fs;
 use image::imageops::{self, FilterType};
 use image::io::Reader as ImageReader;
@@ -289,8 +289,8 @@ struct RenderMarkdownState<'a, 'b> {
     content: &'a Content,
     markdown_tera_ctx: &'a Context,
     md: &'a MarkdownContent,
-    options: &'a ComrakOptions<'b>,
-    plugins: &'a ComrakPlugins<'b>,
+    options: &'a Options<'b>,
+    plugins: &'a Plugins<'b>,
     tera: &'a mut Tera,
     output_path: &'a Utf8Path,
 }
@@ -355,13 +355,13 @@ pub fn render() -> Result<()> {
 
     // Create code-highlighting plugin.
     let adapter = SyntectAdapter::new(Some("base16-ocean.light"));
-    let mut render_options = ComrakRenderOptions::default();
+    let mut render_options = RenderOptions::default();
     render_options.unsafe_ = true;
-    let options = ComrakOptions {
+    let options = Options {
         render: render_options,
         ..Default::default()
     };
-    let mut plugins = ComrakPlugins::default();
+    let mut plugins = Plugins::default();
     plugins.render.codefence_syntax_highlighter = Some(&adapter);
 
     // Load templates.
