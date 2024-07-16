@@ -4,8 +4,8 @@ date: 2024-07-16
 +++
 
 I recently open-sourced and published a Rust crate for reading data from
-an [ext4] file system: [ext4-view-rs]. As the name indicates, this
-library is purely for _reading_, write support is intentionally not
+an [ext4] file system: [ext4-view-rs]. As the name hopefully indicates,
+this library is purely for reading, write support is intentionally not
 included. The library is `no_std`, but does require an allocator.
 
 The specific use I have for this code is loading data in a [UEFI]
