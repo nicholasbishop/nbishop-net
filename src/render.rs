@@ -354,7 +354,7 @@ pub fn render() -> Result<()> {
     fs::create_dir(&conf.output_dir)?;
 
     // Create code-highlighting plugin.
-    let adapter = SyntectAdapter::new("base16-ocean.light");
+    let adapter = SyntectAdapter::new(Some("base16-ocean.light"));
     let mut render_options = ComrakRenderOptions::default();
     render_options.unsafe_ = true;
     let options = ComrakOptions {
