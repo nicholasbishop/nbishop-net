@@ -355,11 +355,10 @@ pub fn render() -> Result<()> {
 
     // Create code-highlighting plugin.
     let adapter = SyntectAdapter::new("base16-ocean.light");
+    let mut render_options = ComrakRenderOptions::default();
+    render_options.unsafe_ = true;
     let options = ComrakOptions {
-        render: ComrakRenderOptions {
-            unsafe_: true,
-            ..Default::default()
-        },
+        render: render_options,
         ..Default::default()
     };
     let mut plugins = ComrakPlugins::default();
