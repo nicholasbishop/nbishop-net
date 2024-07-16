@@ -20,7 +20,7 @@ jobs:
           profile: minimal
           toolchain: stable
           override: true
-      - uses: Swatinem/rust-cache@d12701459954fec471b2d34cdf7ea3374b026383
+      - uses: Swatinem/rust-cache@v2
       - uses: actions-rs/cargo@v1
         with:
           command: check
@@ -36,7 +36,7 @@ jobs:
           profile: minimal
           toolchain: stable
           override: true
-      - uses: Swatinem/rust-cache@d12701459954fec471b2d34cdf7ea3374b026383
+      - uses: Swatinem/rust-cache@v2
       - uses: actions-rs/cargo@v1
         with:
           command: test
@@ -52,7 +52,7 @@ jobs:
           toolchain: stable
           override: true
       - run: rustup component add rustfmt
-      - uses: Swatinem/rust-cache@d12701459954fec471b2d34cdf7ea3374b026383
+      - uses: Swatinem/rust-cache@v2
       - uses: actions-rs/cargo@v1
         with:
           command: fmt
@@ -70,7 +70,7 @@ jobs:
           toolchain: stable
           override: true
       - run: rustup component add clippy
-      - uses: Swatinem/rust-cache@d12701459954fec471b2d34cdf7ea3374b026383
+      - uses: Swatinem/rust-cache@v2
       - uses: actions-rs/cargo@v1
         with:
           command: clippy
