@@ -285,12 +285,12 @@ struct TocItem {
     target: String,
 }
 
-struct RenderMarkdownState<'a> {
+struct RenderMarkdownState<'a, 'b> {
     content: &'a Content,
     markdown_tera_ctx: &'a Context,
     md: &'a MarkdownContent,
-    options: &'a ComrakOptions,
-    plugins: &'a ComrakPlugins<'a>,
+    options: &'a ComrakOptions<'b>,
+    plugins: &'a ComrakPlugins<'b>,
     tera: &'a mut Tera,
     output_path: &'a Utf8Path,
 }
