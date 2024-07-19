@@ -17,6 +17,7 @@ thoughts I have about programming.
 * [emacs-conf](https://github.com/nicholasbishop/emacs-conf) - My personal Emacs configuration
 * [ext4-view-rs](https://github.com/nicholasbishop/ext4-view-rs) - Rust library for reading ext4 filesystems
 * [gpt-disk-rs](https://github.com/google/gpt-disk-rs) - Rust libraries for working with GPT (GUID Partition Table) disk data
+* [release-utils-rs](https://github.com/nicholasbishop/release-utils-rs) - Tools for automatically releasing Rust code.
 * [sbat-rs](https://github.com/google/sbat-rs) - Rust library for working with UEFI SBAT
 * [uefi-rs](https://github.com/rust-osdev/uefi-rs) (co-maintainer) - Rust wrapper for UEFI
 * [writedisk](https://github.com/nicholasbishop/writedisk) - Small utility for writing a disk image to a USB drive
