@@ -10,7 +10,7 @@ argh = "0.1.12"
 camino = "1.1.6"
 command-run = "1.1.1"
 comrak = "0.26.0"
-fs-err = "2.9.0"
+fs-err = "3.0.0"
 image = { version = "0.25.0", default-features = false, features = ["jpeg"] }
 rayon = "1.7.0"
 rss = "2.0.6"
