@@ -1,10 +1,10 @@
-use anyhow::{anyhow, bail, Context as _, Result};
+use anyhow::{Context as _, Result, anyhow, bail};
 use camino::{Utf8Path, Utf8PathBuf};
 use comrak::plugins::syntect::SyntectAdapter;
 use comrak::{Options, Plugins, RenderOptions};
 use fs_err as fs;
-use image::imageops::{self, FilterType};
 use image::ImageReader;
+use image::imageops::{self, FilterType};
 use rayon::prelude::*;
 use rss::ChannelBuilder;
 use serde::Serialize;
