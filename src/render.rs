@@ -4,7 +4,7 @@ use comrak::plugins::syntect::SyntectAdapter;
 use comrak::{Options, Plugins, RenderOptions};
 use fs_err as fs;
 use image::imageops::{self, FilterType};
-use image::io::Reader as ImageReader;
+use image::ImageReader;
 use rayon::prelude::*;
 use rss::ChannelBuilder;
 use serde::Serialize;
@@ -355,8 +355,10 @@ pub fn render() -> Result<()> {
 
     // Create code-highlighting plugin.
     let adapter = SyntectAdapter::new(Some("base16-ocean.light"));
-    let mut render_options = RenderOptions::default();
-    render_options.unsafe_ = true;
+    let render_options = RenderOptions {
+        unsafe_: true,
+        ..Default::default()
+    };
     let options = Options {
         render: render_options,
         ..Default::default()
