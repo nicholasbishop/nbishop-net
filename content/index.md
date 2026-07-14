@@ -12,7 +12,6 @@ thoughts I have about programming.
 ## Projects
 
 * [All github repositories](https://github.com/nicholasbishop?tab=repositories)
-* [Rust Conversions](https://nicholasbishop.github.io/rust-conversions/) - Quick reference for converting between various string and byte types
 * [crdyboot](https://chromium.googlesource.com/chromiumos/platform/crdyboot/+/HEAD#crdyboot) - UEFI bootloader written in Rust
 * [emacs-conf](https://github.com/nicholasbishop/emacs-conf) - My personal Emacs configuration
 * [ext4-view-rs](https://github.com/nicholasbishop/ext4-view-rs) - Rust library for reading ext4 filesystems
