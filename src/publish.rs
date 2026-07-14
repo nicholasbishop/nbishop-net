@@ -22,6 +22,7 @@ pub fn publish() -> Result<()> {
     // Create an empty repo.
     Command::with_args("git", ["init", repo_path]).run()?;
 
+    #[expect(clippy::result_large_err)]
     let set_config = |key, val| {
         Command::with_args("git", ["-C", repo_path, "config", key, val]).run()
     };
